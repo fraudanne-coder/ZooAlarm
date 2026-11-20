@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Anlaut-Zoo</title>
+<style>
+  :root {
+    --zoo-yellow: #F9C81B;
+    --ink: #1e1e1e;
+    --panel: #fffdf5;
+    --success: #22c55e;
+    --error: #ef4444;
+    --btn-blue: #2563eb;
+  }
+
+  * {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: var(--zoo-yellow);
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+    color: var(--ink);
+  }
+
+  .screen {
+    position: fixed;
+    inset: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .screen.active {
+    display: flex;
+  }
+
+  /* ================= SCREEN 1: WILLKOMMEN ================= */
+  #welcomeScreen {
+    background: var(--zoo-yellow) url('1.png') center center / contain no-repeat;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: clamp(20px, 5vw, 56px);
+  }
+
+  .welcome-controls {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    background: rgba(249, 200, 27, 0.94);
+    padding: 14px 20px;
+    border-radius: 28px;
+    border: 3.5px solid var(--ink);
+    box-shadow: 0 6px 0 var(--ink);
+  }
+
+  .icon-btn {
+    width: 68px;
+    height: 68px;
+    border-radius: 22px;
+    border: 3.5px solid var(--ink);
+    background: #ffffff;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 5px 0 var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .icon-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 var(--ink);
+  }
+
+  .start-btn {
+    height: 68px;
+    padding: 0 34px;
+    border-radius: 22px;
+    border: 3.5px solid var(--ink);
+    background: var(--success);
+    color: #ffffff;
+    font-size: 1.7rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 var(--ink);
+    touch-action: manipulation;
+  }
+
+  .start-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 var(--ink);
+  }
+
+  /* ================= SCREEN 2: ZOO-LAGEPLAN ================= */
+  #gameScreen {
+    background: var(--zoo-yellow) url('2.png') center center / cover no-repeat;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .top-hud {
+    position: relative;
+    z-index: 25;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px;
+  }
+
+  .round-badge {
+    background: var(--panel);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-weight: bold;
+    font-size: 1.05rem;
+    box-shadow: 0 4px 0 var(--ink);
+  }
+
+  .home-btn {
+    background: var(--panel);
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 1.05rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--ink);
+  }
+
+  /* Gehege-Bereich */
+  .enclosures-layer {
+    position: relative;
+    flex: 1 1 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(12px, 2.2vw, 28px);
+    padding: 6px clamp(14px, 3vw, 36px) 14px;
+    z-index: 5;
+  }
+
+  .enclosure {
+    position: relative;
+    border-radius: 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 8px;
+    transition: transform 0.15s ease;
+  }
+
+  .enclosure-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .enclosure-fill {
+    fill: rgba(255, 253, 245, 0.42);
+    transition: fill 0.15s ease;
+  }
+
+  .enclosure.highlight {
+    transform: scale(1.02);
+  }
+
+  .enclosure.highlight .enclosure-fill {
+    fill: rgba(255, 255, 255, 0.78);
+  }
+
+  .enclosure.full .enclosure-fill {
+    fill: rgba(220, 252, 231, 0.52);
+  }
+
+  /* Buchstabenschild am Gehege */
+  .letter-sign {
+    position: relative;
+    background: #ffffff;
+    border: 3.5px solid var(--ink);
+    border-radius: 18px;
+    min-width: 74px;
+    padding: 4px 16px;
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    font-weight: bold;
+    line-height: 1.1;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 var(--ink);
+    touch-action: manipulation;
+    z-index: 8;
+  }
+
+  .letter-sign:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--ink);
+  }
+
+  /* 3 feste Plätze innerhalb jedes Geheges */
+  .slots-container {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    margin-top: 6px;
+    z-index: 4;
+  }
+
+  .slot {
+    position: absolute;
+    width: 34%;
+    height: 44%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slot-0 { left: 7%;  top: 6%; }
+  .slot-1 { right: 7%; top: 12%; }
+  .slot-2 { left: 32%; bottom: 7%; }
+
+  /* Laufweg im Vordergrund */
+  .pathway {
+    position: relative;
+    height: clamp(112px, 21vh, 168px);
+    width: 100%;
+    background: rgba(255, 253, 245, 0.26);
+    border-top: 3.5px solid var(--ink);
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  /* Bewegliche Tiere */
+  .animal {
+    position: absolute;
+    width: clamp(82px, 11.5vw, 118px);
+    height: clamp(82px, 11.5vw, 118px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+    z-index: 15;
+    transition: transform 0.12s ease-out;
+  }
+
+  .animal.dragging {
+    cursor: grabbing;
+    z-index: 50;
+    transform: scale(1.18);
+  }
+
+  .animal.snapped {
+    cursor: default;
+    touch-action: auto;
+    z-index: 12;
+    width: clamp(66px, 8.8vw, 96px);
+    height: clamp(66px, 8.8vw, 96px);
+  }
+
+  .animal img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.16));
+  }
+
+  .animal-emoji {
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    line-height: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.16));
+  }
+
+  /* Runden-Abschluss Overlay */
+  .round-complete-banner {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 30, 30, 0.45);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .round-complete-banner.show {
+    display: flex;
+  }
+
+  .complete-card {
+    background: var(--panel);
+    border: 4px solid var(--ink);
+    border-radius: 32px;
+    padding: 28px 36px;
+    text-align: center;
+    box-shadow: 0 10px 0 var(--ink);
+    max-width: 440px;
+    width: 100%;
+  }
+
+  .complete-card h2 {
+    margin: 0 0 16px;
+    font-size: 2.2rem;
+  }
+
+  .next-btn {
+    background: var(--success);
+    color: #fff;
+    border: 3.5px solid var(--ink);
+    border-radius: 22px;
+    padding: 14px 28px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px 0 var(--ink);
+  }
+
+  .next-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 var(--ink);
+  }
+</style>
+</head>
+<body>
+
+  <!-- SCREEN 1: WILLKOMMEN -->
+  <section id="welcomeScreen" class="screen active">
+    <div class="welcome-controls">
+      <button class="icon-btn" id="welcomeAudioBtn" aria-label="Text vorlesen" onclick="playWelcomeAudio()">🔊</button>
+      <button class="start-btn" onclick="openGameScreen()">Start</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 2: SPIELFLÄCHE -->
+  <section id="gameScreen" class="screen">
+    <div class="top-hud">
+      <div class="round-badge" id="roundBadge">Runde 1: L · N · O</div>
+      <button class="home-btn" onclick="openWelcomeScreen()">Startseite</button>
+    </div>
+
+    <div class="enclosures-layer" id="enclosuresLayer"></div>
+
+    <div class="pathway" id="pathway"></div>
+  </section>
+
+  <!-- RUNDEN-ABSCHLUSS -->
+  <div class="round-complete-banner" id="roundCompleteBanner">
+    <div class="complete-card">
+      <div style="font-size: 3.5rem;">🎉🦁🐢</div>
+      <h2>Super gemacht!</h2>
+      <button class="next-btn" onclick="nextRound()">Nächste Runde</button>
+    </div>
+  </div>
+
+<script>
+  // ================= TIERE & RUNDEN (27 TIERE -> assets/tiere/<id>.png) =================
+  const ROUNDS = [
+    {
+      title: "Runde 1: L · N · O",
+      letters: ["L", "N", "O"],
+      animals: [
+        { id: "loewe",      name: "Löwe",       letter: "L", emoji: "🦁", imgSrc: "assets/tiere/loewe.png",      audioSrc: "audio/loewe.mp3" },
+        { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙", imgSrc: "assets/tiere/lama.png",       audioSrc: "audio/lama.mp3" },
+        { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱", imgSrc: "assets/tiere/luchs.png",      audioSrc: "audio/luchs.mp3" },
+        { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏", imgSrc: "assets/tiere/nashorn.png",    audioSrc: "audio/nashorn.mp3" },
+        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: " hippo".trim(), imgSrc: "assets/tiere/nilpferd.png", audioSrc: "audio/nilpferd.mp3" },
+        { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝", imgSrc: "assets/tiere/nasenbaer.png",  audioSrc: "audio/nasenbaer.mp3" },
+        { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧", imgSrc: "assets/tiere/orang-utan.png", audioSrc: "audio/orang-utan.mp3" },
+        { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙", imgSrc: "assets/tiere/oktopus.png",    audioSrc: "audio/oktopus.mp3" },
+        { id: "otter",      name: "Otter",      letter: "O", emoji: "🦦", imgSrc: "assets/tiere/otter.png",      audioSrc: "audio/otter.mp3" }
+      ]
+    },
+    {
+      title: "Runde 2: A · B · F",
+      letters: ["A", "B", "F"],
+      animals: [
+        { id: "ameisenbaer", name: "Ameisenbär", letter: "A", emoji: "🐾", imgSrc: "assets/tiere/ameisenbaer.png", audioSrc: "audio/ameisenbaer.mp3" },
+        { id: "antilope",    name: "Antilope",   letter: "A", emoji: "🦌", imgSrc: "assets/tiere/antilope.png",    audioSrc: "audio/antilope.mp3" },
+        { id: "anakonda",    name: "Anakonda",   letter: "A", emoji: "🐍", imgSrc: "assets/tiere/anakonda.png",    audioSrc: "audio/anakonda.mp3" },
+        { id: "baer",        name: "Bär",        letter: "B", emoji: "🐻", imgSrc: "assets/tiere/baer.png",        audioSrc: "audio/baer.mp3" },
+        { id: "biber",       name: "Biber",      letter: "B", emoji: "🦫", imgSrc: "assets/tiere/biber.png",       audioSrc: "audio/biber.mp3" },
+        { id: "bonobo",      name: "Bonobo",     letter: "B", emoji: "🐒", imgSrc: "assets/tiere/bonobo.png",      audioSrc: "audio/bonobo.mp3" },
+        { id: "flamingo",    name: "Flamingo",   letter: "F", emoji: "🦩", imgSrc: "assets/tiere/flamingo.png",    audioSrc: "audio/flamingo.mp3" },
+        { id: "frosch",      name: "Frosch",     letter: "F", emoji: "🐸", imgSrc: "assets/tiere/frosch.png",      audioSrc: "audio/frosch.mp3" },
+        { id: "fuchs",       name: "Fuchs",      letter: "F", emoji: "🦊", imgSrc: "assets/tiere/fuchs.png",       audioSrc: "audio/fuchs.mp3" }
+      ]
+    },
+    {
+      title: "Runde 3: K · P · T",
+      letters: ["K", "P", "T"],
+      animals: [
+        { id: "krokodil", name: "Krokodil", letter: "K", emoji: "🐊", imgSrc: "assets/tiere/krokodil.png", audioSrc: "audio/krokodil.mp3" },
+        { id: "koala",    name: "Koala",    letter: "K", emoji: "🐨", imgSrc: "assets/tiere/koala.png",    audioSrc: "audio/koala.mp3" },
+        { id: "kamel",    name: "Kamel",    letter: "K", emoji: "🐪", imgSrc: "assets/tiere/kamel.png",    audioSrc: "audio/kamel.mp3" },
+        { id: "pinguin",  name: "Pinguin",  letter: "P", emoji: "🐧", imgSrc: "assets/tiere/pinguin.png",  audioSrc: "audio/pinguin.mp3" },
+        { id: "panda",    name: "Panda",    letter: "P", emoji: "🐼", imgSrc: "assets/tiere/panda.png",    audioSrc: "audio/panda.mp3" },
+        { id: "papagei",  name: "Papagei",  letter: "P", emoji: "🦜", imgSrc: "assets/tiere/papagei.png",  audioSrc: "audio/papagei.mp3" },
+        { id: "tiger",    name: "Tiger",    letter: "T", emoji: "🐯", imgSrc: "assets/tiere/tiger.png",    audioSrc: "audio/tiger.mp3" },
+        { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗", imgSrc: "assets/tiere/tapir.png",    audioSrc: "audio/tapir.mp3" },
+        { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦", imgSrc: "assets/tiere/tukan.png",    audioSrc: "audio/tukan.mp3" }
+      ]
+    }
+  ];
+
+  // Ablenker-Tiere, die zwischendurch auf dem Weg vorbeilaufen
+  const DECOY_POOL = [
+    { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓", imgSrc: "assets/tiere/zebra.png",   audioSrc: "audio/zebra.mp3" },
+    { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘", imgSrc: "assets/tiere/elefant.png", audioSrc: "audio/elefant.mp3" },
+    { id: "giraffe", name: "Giraffe", letter: "G", emoji: "🦒", imgSrc: "assets/tiere/giraffe.png", audioSrc: "audio/giraffe.mp3" },
+    { id: "wal",     name: "Wal",     letter: "W", emoji: "🐳", imgSrc: "assets/tiere/wal.png",     audioSrc: "audio/wal.mp3" }
+  ];
+
+  const PHONETIC_FALLBACK = {
+    "A": "Aaa", "B": "B", "F": "Fff", "K": "K", "L": "Lll",
+    "N": "Nnn", "O": "Ooo", "P": "P", "T": "T"
+  };
+
+  // ================= SKIZZEN-ZAUN FÜR GEHEGE =================
+  function createEnclosureFenceSVG(variantIndex) {
+    // Drei leicht unterschiedliche Handzeichnungs-Gehege (Zaun, Pfosten, Striche)
+    const variants = [
+      `<svg class="enclosure-frame" viewBox="0 0 300 220" preserveAspectRatio="none">
+        <rect class="enclosure-fill" x="10" y="10" width="280" height="200" rx="22" />
+        <path d="M12,18 Q150,8 288,16 Q292,110 286,204 Q150,212 14,204 Q8,110 12,18 Z"
+              fill="none" stroke="#1e1e1e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M14,68 L286,66 M14,158 L286,156" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-dasharray="12 6" stroke-linecap="round" />
+        <path d="M55,14 L54,206 M150,12 L151,208 M245,14 L246,206" fill="none" stroke="#1e1e1e" stroke-width="3.5" stroke-linecap="round" />
+      </svg>`,
+      `<svg class="enclosure-frame" viewBox="0 0 300 220" preserveAspectRatio="none">
+        <rect class="enclosure-fill" x="10" y="10" width="280" height="200" rx="22" />
+        <path d="M14,15 Q150,21 286,14 Q290,110 287,205 Q150,199 13,205 Q10,110 14,15 Z"
+              fill="none" stroke="#1e1e1e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M12,112 L288,114" fill="none" stroke="#1e1e1e" stroke-width="2.5" stroke-dasharray="10 8" stroke-linecap="round" />
+        <path d="M42,14 L43,206 M115,14 L114,206 M186,14 L187,206 M258,14 L257,206" fill="none" stroke="#1e1e1e" stroke-width="3.2" stroke-linecap="round" />
+      </svg>`,
+      `<svg class="enclosure-frame" viewBox="0 0 300 220" preserveAspectRatio="none">
+        <rect class="enclosure-fill" x="10" y="10" width="280" height="200" rx="22" />
+        <path d="M12,17 Q150,10 288,17 Q291,110 288,203 Q150,210 12,203 Q9,110 12,17 Z"
+              fill="none" stroke="#1e1e1e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M15,62 L285,64 M15,164 L285,162" fill="none" stroke="#1e1e1e" stroke-width="2.8" stroke-dasharray="14 7" stroke-linecap="round" />
+        <path d="M68,14 L67,206 M232,14 L233,206" fill="none" stroke="#1e1e1e" stroke-width="3.8" stroke-linecap="round" />
+      </svg>`
+    ];
+    return variants[variantIndex % variants.length];
+  }
+
+  // ================= AUDIO (ELEVENLABS MP3 + TTS FALLBACK) =================
+  let currentAudio = null;
+
+  function playSound({ mp3Path, fallbackText }) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+
+    if (mp3Path) {
+      const audio = new Audio(mp3Path);
+      currentAudio = audio;
+      audio.play().catch(() => {
+        speakFallback(fallbackText);
+      });
+      return;
+    }
+    speakFallback(fallbackText);
+  }
+
+  function speakFallback(text) {
+    if (!text || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'de-DE';
+    utter.rate = 0.88;
+    window.speechSynthesis.speak(utter);
+  }
+
+  function playWelcomeAudio() {
+    playSound({
+      mp3Path: "audio/willkommen.mp3",
+      fallbackText: "Willkommen im Zoo! Leider sind unsere Tiere ausgebrochen. Hilf uns, sie wieder einzufangen."
+    });
+  }
+
+  function playLetterAudio(letter) {
+    const key = letter.toLowerCase();
+    playSound({
+      mp3Path: `audio/laut_${key}.mp3`,
+      fallbackText: PHONETIC_FALLBACK[letter] || letter
+    });
+  }
+
+  // ================= SPIELZUSTAND =================
+  let roundIndex = 0;
+  let activeWalkers = [];
+  let placedCounts = {};
+  let spawnTimer = null;
+  let rafId = null;
+  let lastFrameTime = 0;
+  let roundFinished = false;
+
+  function openWelcomeScreen() {
+    stopLoop();
+    document.getElementById('roundCompleteBanner').classList.remove('show');
+    document.getElementById('gameScreen').classList.remove('active');
+    document.getElementById('welcomeScreen').classList.add('active');
+  }
+
+  function openGameScreen() {
+    document.getElementById('welcomeScreen').classList.remove('active');
+    document.getElementById('gameScreen').classList.add('active');
+    initRound(roundIndex);
+  }
+
+  function initRound(idx) {
+    stopLoop();
+    roundFinished = false;
+    document.getElementById('roundCompleteBanner').classList.remove('show');
+
+    const round = ROUNDS[idx % ROUNDS.length];
+    document.getElementById('roundBadge').textContent = round.title;
+
+    placedCounts = {};
+    round.letters.forEach(l => placedCounts[l] = 0);
+
+    const layer = document.getElementById('enclosuresLayer');
+    layer.innerHTML = '';
+
+    round.letters.forEach((letter, i) => {
+      const enc = document.createElement('div');
+      enc.className = 'enclosure';
+      enc.dataset.letter = letter;
+      enc.innerHTML = createEnclosureFenceSVG(i);
+
+      const sign = document.createElement('button');
+      sign.type = 'button';
+      sign.className = 'letter-sign';
+      sign.textContent = letter;
+      sign.onclick = (e) => {
+        e.stopPropagation();
+        playLetterAudio(letter);
+      };
+
+      const slotsBox = document.createElement('div');
+      slotsBox.className = 'slots-container';
+
+      for (let s = 0; s < 3; s++) {
+        const slot = document.createElement('div');
+        slot.className = `slot slot-${s}`;
+        slot.dataset.occupied = "false";
+        slotsBox.appendChild(slot);
+      }
+
+      enc.appendChild(sign);
+      enc.appendChild(slotsBox);
+      layer.appendChild(enc);
+    });
+
+    const pathway = document.getElementById('pathway');
+    pathway.innerHTML = '';
+    activeWalkers = [];
+
+    const queue = [...round.animals].sort(() => Math.random() - 0.5);
+    let queuePointer = 0;
+
+    for (let i = 0; i < 3; i++) {
+      const item = queue[queuePointer % queue.length];
+      queuePointer++;
+      spawnWalker(item, 80 + i * 195);
+    }
+
+    spawnTimer = setInterval(() => {
+      if (roundFinished) return;
+      const remainingTarget = round.animals.filter(a => !isAnimalSnapped(a.id));
+      if (remainingTarget.length === 0) return;
+
+      const pickDecoy = Math.random() < 0.25;
+      const sourceList = pickDecoy ? DECOY_POOL : remainingTarget;
+      const nextAnimal = sourceList[Math.floor(Math.random() * sourceList.length)];
+      spawnWalker(nextAnimal, -115);
+    }, 2400);
+
+    lastFrameTime = performance.now();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function isAnimalSnapped(animalId) {
+    return activeWalkers.some(w => w.data.id === animalId && w.snapped);
+  }
+
+  function spawnWalker(data, startX) {
+    const pathway = document.getElementById('pathway');
+    const el = document.createElement('div');
+    el.className = 'animal';
+    el.style.top = '12px';
+    el.style.left = `${startX}px`;
+
+    const fallbackSpan = document.createElement('span');
+    fallbackSpan.className = 'animal-emoji';
+    fallbackSpan.textContent = data.emoji;
+    fallbackSpan.style.display = data.imgSrc ? 'none' : 'inline';
+
+    if (data.imgSrc) {
+      const img = document.createElement('img');
+      img.src = data.imgSrc;
+      img.alt = data.name;
+      img.onerror = () => {
+        img.style.display = 'none';
+        fallbackSpan.style.display = 'inline';
+      };
+      el.appendChild(img);
+    }
+    el.appendChild(fallbackSpan);
+
+    pathway.appendChild(el);
+
+    const walker = {
+      el,
+      data,
+      x: startX,
+      speed: 55 + Math.random() * 25,
+      snapped: false,
+      dragging: false
+    };
+
+    attachDragHandlers(walker);
+    activeWalkers.push(walker);
+  }
+
+  function attachDragHandlers(walker) {
+    let offsetX = 0;
+    let offsetY = 0;
+
+    walker.el.addEventListener('pointerdown', (e) => {
+      if (walker.snapped || roundFinished) return;
+      e.preventDefault();
+      walker.el.setPointerCapture(e.pointerId);
+      walker.dragging = true;
+      walker.el.classList.add('dragging');
+
+      playSound({
+        mp3Path: walker.data.audioSrc,
+        fallbackText: walker.data.name
+      });
+
+      const rect = walker.el.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+
+      walker.el.style.position = 'fixed';
+      walker.el.style.left = `${rect.left}px`;
+      walker.el.style.top = `${rect.top}px`;
+      document.body.appendChild(walker.el);
+    });
+
+    walker.el.addEventListener('pointermove', (e) => {
+      if (!walker.dragging) return;
+      walker.el.style.left = `${e.clientX - offsetX}px`;
+      walker.el.style.top = `${e.clientY - offsetY}px`;
+      highlightEnclosureAt(e.clientX, e.clientY);
+    });
+
+    walker.el.addEventListener('pointerup', (e) => {
+      if (!walker.dragging) return;
+      walker.dragging = false;
+      walker.el.classList.remove('dragging');
+      clearEnclosureHighlights();
+
+      const targetEnc = findEnclosureAt(e.clientX, e.clientY);
+      if (targetEnc) {
+        const encLetter = targetEnc.dataset.letter;
+        const freeSlot = targetEnc.querySelector('.slot[data-occupied="false"]');
+
+        if (encLetter === walker.data.letter && freeSlot) {
+          snapIntoSlot(walker, targetEnc, freeSlot, encLetter);
+          return;
+        }
+
+        if (encLetter === walker.data.letter && !freeSlot) {
+          playSound({
+            mp3Path: "audio/voll.mp3",
+            fallbackText: "Dieses Gehege ist schon voll."
+          });
+        } else {
+          playSound({
+            mp3Path: "audio/falsch.mp3",
+            fallbackText: "Hier passt es nicht hin."
+          });
+        }
+      }
+
+      returnToPathway(walker);
+    });
+  }
+
+  function snapIntoSlot(walker, enclosure, slot, letter) {
+    walker.snapped = true;
+    slot.dataset.occupied = "true";
+    placedCounts[letter] = (placedCounts[letter] || 0) + 1;
+
+    if (placedCounts[letter] >= 3) {
+      enclosure.classList.add('full');
+    }
+
+    walker.el.classList.remove('dragging');
+    walker.el.classList.add('snapped');
+    walker.el.style.position = 'static';
+    walker.el.style.left = '';
+    walker.el.style.top = '';
+    slot.appendChild(walker.el);
+
+    playSound({
+      mp3Path: "audio/richtig.mp3",
+      fallbackText: `Super! ${walker.data.name} ist im Gehege.`
+    });
+
+    checkRoundComplete();
+  }
+
+  function returnToPathway(walker) {
+    const pathway = document.getElementById('pathway');
+    walker.el.style.position = 'absolute';
+    walker.el.style.top = '12px';
+    walker.x = Math.max(20, Math.min(pathway.clientWidth - 115, walker.x));
+    walker.el.style.left = `${walker.x}px`;
+    pathway.appendChild(walker.el);
+  }
+
+  function findEnclosureAt(x, y) {
+    const enclosures = document.querySelectorAll('.enclosure');
+    for (const enc of enclosures) {
+      const r = enc.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+        return enc;
+      }
+    }
+    return null;
+  }
+
+  function highlightEnclosureAt(x, y) {
+    clearEnclosureHighlights();
+    const enc = findEnclosureAt(x, y);
+    if (enc) enc.classList.add('highlight');
+  }
+
+  function clearEnclosureHighlights() {
+    document.querySelectorAll('.enclosure.highlight').forEach(el => {
+      el.classList.remove('highlight');
+    });
+  }
+
+  function checkRoundComplete() {
+    const allFull = Object.values(placedCounts).every(count => count >= 3);
+    if (!allFull) return;
+
+    roundFinished = true;
+    clearInterval(spawnTimer);
+
+    activeWalkers.forEach(w => {
+      if (!w.snapped && w.el.parentElement) {
+        w.el.remove();
+      }
+    });
+
+    setTimeout(() => {
+      playSound({
+        mp3Path: "audio/gewonnen.mp3",
+        fallbackText: "Hurra! Alle Gehege sind voll!"
+      });
+      document.getElementById('roundCompleteBanner').classList.add('show');
+    }, 650);
+  }
+
+  function nextRound() {
+    roundIndex = (roundIndex + 1) % ROUNDS.length;
+    initRound(roundIndex);
+  }
+
+  function loop(now) {
+    const dt = (now - lastFrameTime) / 1000;
+    lastFrameTime = now;
+
+    const pathway = document.getElementById('pathway');
+    const width = pathway ? pathway.clientWidth : window.innerWidth;
+
+    activeWalkers.forEach(w => {
+      if (w.snapped || w.dragging) return;
+      w.x += w.speed * dt;
+      if (w.x > width + 40) {
+        w.x = -115;
+      }
+      w.el.style.left = `${w.x}px`;
+    });
+
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function stopLoop() {
+    if (spawnTimer) clearInterval(spawnTimer);
+    if (rafId) cancelAnimationFrame(rafId);
+  }
+</script>
+</body>
+</html>

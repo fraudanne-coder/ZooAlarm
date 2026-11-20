@@ -10,7 +10,6 @@
     --ink: #1e1e1e;
     --panel: #fffdf5;
     --success: #22c55e;
-    --error: #ef4444;
     --btn-blue: #2563eb;
   }
 
@@ -46,14 +45,26 @@
 
   /* ================= SCREEN 1: WILLKOMMEN ================= */
   #welcomeScreen {
-    background: var(--zoo-yellow) url('1.png') center center / contain no-repeat;
+    background-color: var(--zoo-yellow);
     flex-direction: column;
     justify-content: flex-end;
     align-items: flex-start;
     padding: clamp(20px, 5vw, 56px);
   }
 
+  .welcome-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 1;
+  }
+
   .welcome-controls {
+    position: relative;
+    z-index: 5;
     display: flex;
     gap: 18px;
     align-items: center;
@@ -104,20 +115,47 @@
     box-shadow: 0 1px 0 var(--ink);
   }
 
-  /* ================= SCREEN 2: ZOO-LAGEPLAN ================= */
+  /* ================= SCREEN 2: ZOO-LANDKARTE ================= */
   #gameScreen {
-    background: var(--zoo-yellow) url('2.png') center center / cover no-repeat;
-    flex-direction: column;
+    background-color: var(--zoo-yellow);
     position: relative;
   }
 
+  .game-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Illustrierte Zoo-Karte im Tusche-Stil */
+  .zoo-map-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
   .top-hud {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 25;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 18px;
+    pointer-events: none;
+  }
+
+  .top-hud > * {
+    pointer-events: auto;
   }
 
   .round-badge {
@@ -141,137 +179,127 @@
     box-shadow: 0 4px 0 var(--ink);
   }
 
-  /* Gehege-Bereich */
-  .enclosures-layer {
-    position: relative;
-    flex: 1 1 auto;
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(12px, 2.2vw, 28px);
-    padding: 6px clamp(14px, 3vw, 36px) 14px;
-    z-index: 5;
-  }
-
-  .enclosure {
-    position: relative;
-    border-radius: 26px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding-top: 8px;
-    transition: transform 0.15s ease;
-  }
-
-  .enclosure-frame {
+  /* Drei frei auf der Karte positionierte Gehege-Zonen */
+  .map-zone {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
+    z-index: 6;
+    border-radius: 46% 54% 48% 52% / 50% 44% 56% 50%;
+    transition: transform 0.15s ease, background 0.15s ease;
   }
 
-  .enclosure-fill {
-    fill: rgba(255, 253, 245, 0.42);
-    transition: fill 0.15s ease;
+  /* Zone 0: Oben links (Wald-/Wiesen-Gehege) */
+  .map-zone-0 {
+    left: 4%;
+    top: 10%;
+    width: 38%;
+    height: 44%;
   }
 
-  .enclosure.highlight {
-    transform: scale(1.02);
+  /* Zone 1: Oben rechts (Teich-/Felsen-Gehege) */
+  .map-zone-1 {
+    right: 4%;
+    top: 9%;
+    width: 39%;
+    height: 45%;
   }
 
-  .enclosure.highlight .enclosure-fill {
-    fill: rgba(255, 255, 255, 0.78);
+  /* Zone 2: Unten links/mitte (Savannen-/Hügel-Gehege) */
+  .map-zone-2 {
+    left: 8%;
+    bottom: 5%;
+    width: 40%;
+    height: 36%;
   }
 
-  .enclosure.full .enclosure-fill {
-    fill: rgba(220, 252, 231, 0.52);
+  .map-zone.highlight {
+    background: rgba(255, 255, 255, 0.45);
+    transform: scale(1.03);
   }
 
-  /* Buchstabenschild am Gehege */
-  .letter-sign {
-    position: relative;
+  .map-zone.full {
+    background: rgba(220, 252, 231, 0.35);
+  }
+
+  /* Holz-Wegweiser für den Buchstaben */
+  .signpost-btn {
+    position: absolute;
     background: #ffffff;
     border: 3.5px solid var(--ink);
-    border-radius: 18px;
-    min-width: 74px;
-    padding: 4px 16px;
-    font-size: clamp(2rem, 4.5vw, 3rem);
+    border-radius: 16px;
+    min-width: 64px;
+    padding: 3px 14px;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
     font-weight: bold;
     line-height: 1.1;
     text-align: center;
     cursor: pointer;
     box-shadow: 0 5px 0 var(--ink);
     touch-action: manipulation;
-    z-index: 8;
+    z-index: 9;
   }
 
-  .letter-sign:active {
+  .signpost-btn::after {
+    content: "";
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 12px;
+    background: var(--ink);
+    border-radius: 2px;
+  }
+
+  .signpost-btn:active {
     transform: translateY(3px);
     box-shadow: 0 2px 0 var(--ink);
   }
 
-  /* 3 feste Plätze innerhalb jedes Geheges */
-  .slots-container {
-    position: relative;
-    width: 100%;
-    flex: 1;
-    margin-top: 6px;
-    z-index: 4;
-  }
+  .map-zone-0 .signpost-btn { top: -12px; left: 42%; }
+  .map-zone-1 .signpost-btn { top: -10px; left: 38%; }
+  .map-zone-2 .signpost-btn { top: -16px; left: 42%; }
 
+  /* 3 feste Plätze auf der Wiese jeder Gehege-Insel */
   .slot {
     position: absolute;
-    width: 34%;
+    width: 30%;
     height: 44%;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .slot-0 { left: 7%;  top: 6%; }
-  .slot-1 { right: 7%; top: 12%; }
-  .slot-2 { left: 32%; bottom: 7%; }
+  .slot-0 { left: 10%; top: 24%; }
+  .slot-1 { right: 10%; top: 22%; }
+  .slot-2 { left: 35%; bottom: 8%; }
 
-  /* Laufweg im Vordergrund */
-  .pathway {
-    position: relative;
-    height: clamp(112px, 21vh, 168px);
-    width: 100%;
-    background: rgba(255, 253, 245, 0.26);
-    border-top: 3.5px solid var(--ink);
-    overflow: hidden;
-    z-index: 10;
-  }
-
-  /* Bewegliche Tiere */
+  /* Laufende Tiere auf dem Zoo-Weg */
   .animal {
-    position: absolute;
-    width: clamp(82px, 11.5vw, 118px);
-    height: clamp(82px, 11.5vw, 118px);
+    position: fixed;
+    width: clamp(82px, 11vw, 116px);
+    height: clamp(82px, 11vw, 116px);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: grab;
     touch-action: none;
-    z-index: 15;
+    z-index: 16;
     transition: transform 0.12s ease-out;
   }
 
   .animal.dragging {
     cursor: grabbing;
-    z-index: 50;
+    z-index: 60;
     transform: scale(1.18);
   }
 
   .animal.snapped {
+    position: static;
     cursor: default;
     touch-action: auto;
-    z-index: 12;
-    width: clamp(66px, 8.8vw, 96px);
-    height: clamp(66px, 8.8vw, 96px);
+    z-index: 8;
+    width: clamp(64px, 8.5vw, 94px);
+    height: clamp(64px, 8.5vw, 94px);
   }
 
   .animal img {
@@ -343,22 +371,78 @@
 
   <!-- SCREEN 1: WILLKOMMEN -->
   <section id="welcomeScreen" class="screen active">
+    <img class="welcome-bg-img" src="1.png" alt="Willkommen im Zoo"
+         onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='1.PNG';}else{this.style.display='none';}">
     <div class="welcome-controls">
       <button class="icon-btn" id="welcomeAudioBtn" aria-label="Text vorlesen" onclick="playWelcomeAudio()">🔊</button>
       <button class="start-btn" onclick="openGameScreen()">Start</button>
     </div>
   </section>
 
-  <!-- SCREEN 2: SPIELFLÄCHE -->
+  <!-- SCREEN 2: ZOO-LANDKARTE -->
   <section id="gameScreen" class="screen">
+    <img class="game-bg-img" src="2.png" alt=""
+         onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='2.PNG';}else{this.style.display='none';}">
+
+    <!-- Gezeichnete Zoo-Karte (Wege, 3 Gehege-Inseln, Bäume, Teich, Felsen) -->
+    <svg class="zoo-map-svg" viewBox="0 0 1000 620" preserveAspectRatio="none">
+      <!-- Geschwungener Hauptweg durch den Zoo -->
+      <path d="M -30,415 C 190,395 310,335 495,355 C 675,375 795,485 1030,465"
+            fill="none" stroke="#fff7d6" stroke-width="88" stroke-linecap="round" />
+      <path d="M -30,372 C 190,352 310,292 495,312 C 675,332 795,442 1030,422"
+            fill="none" stroke="#1e1e1e" stroke-width="3.5" stroke-dasharray="14 9" stroke-linecap="round" />
+      <path d="M -30,458 C 190,438 310,378 495,398 C 675,418 795,528 1030,508"
+            fill="none" stroke="#1e1e1e" stroke-width="3.5" stroke-dasharray="14 9" stroke-linecap="round" />
+
+      <!-- Kleine Nebenwege zu den Gehege-Inseln -->
+      <path d="M 225,355 L 225,315 M 695,355 L 695,315 M 310,415 L 310,445"
+            stroke="#1e1e1e" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" />
+
+      <!-- INSEL 0 (Oben Links: Wald-/Wiesen-Bereich) -->
+      <path d="M 55,175 C 45,95 145,55 245,62 C 350,68 425,112 415,195 C 405,275 320,315 220,312 C 120,308 62,255 55,175 Z"
+            fill="#fffdf5" fill-opacity="0.72" stroke="#1e1e1e" stroke-width="4" stroke-linejoin="round" />
+      <!-- Deko: Bäumchen & Grasbüschel -->
+      <g transform="translate(88,108)" stroke="#1e1e1e" stroke-width="2.6" fill="#fffdf5">
+        <line x1="0" y1="14" x2="0" y2="30" />
+        <circle cx="0" cy="6" r="13" />
+        <circle cx="-9" cy="11" r="9" />
+        <circle cx="9" cy="11" r="9" />
+      </g>
+      <path d="M 355,255 l -4,-10 m 4,10 l 0,-12 m 0,12 l 5,-9" stroke="#1e1e1e" stroke-width="2.4" stroke-linecap="round" />
+
+      <!-- INSEL 1 (Oben Rechts: Teich-/Felsen-Bereich) -->
+      <path d="M 575,165 C 570,82 665,50 775,56 C 885,62 962,108 955,192 C 948,274 865,314 760,310 C 655,306 580,248 575,165 Z"
+            fill="#fffdf5" fill-opacity="0.72" stroke="#1e1e1e" stroke-width="4" stroke-linejoin="round" />
+      <!-- Deko: Kleiner Teich & Stein -->
+      <ellipse cx="885" cy="245" rx="34" ry="18" fill="#e0f2fe" stroke="#1e1e1e" stroke-width="2.6" />
+      <path d="M 870,245 Q 885,240 900,245" fill="none" stroke="#1e1e1e" stroke-width="1.8" />
+      <path d="M 605,112 C 605,96 632,96 635,112 Z" fill="#e2e8f0" stroke="#1e1e1e" stroke-width="2.5" />
+
+      <!-- INSEL 2 (Unten Links/Mitte: Hügel-Bereich) -->
+      <path d="M 95,495 C 90,432 185,405 290,410 C 395,415 478,448 472,512 C 466,576 378,602 275,598 C 172,594 100,558 95,495 Z"
+            fill="#fffdf5" fill-opacity="0.72" stroke="#1e1e1e" stroke-width="4" stroke-linejoin="round" />
+      <!-- Deko: Kleiner Busch & Gras -->
+      <path d="M 128,548 C 122,534 142,528 148,538 C 156,528 174,536 168,548 Z"
+            fill="#fffdf5" stroke="#1e1e1e" stroke-width="2.5" stroke-linejoin="round" />
+      <path d="M 422,542 l -4,-10 m 4,10 l 0,-12 m 0,12 l 5,-9" stroke="#1e1e1e" stroke-width="2.4" stroke-linecap="round" />
+
+      <!-- Kleine Zoo-Deko rechts unten (Eingangstor / Schild) -->
+      <g transform="translate(650,535)" stroke="#1e1e1e" stroke-width="2.6" fill="#fffdf5">
+        <line x1="0" y1="12" x2="0" y2="32" />
+        <circle cx="0" cy="4" r="14" />
+        <line x1="26" y1="16" x2="26" y2="32" />
+        <circle cx="26" cy="9" r="11" />
+      </g>
+    </svg>
+
     <div class="top-hud">
       <div class="round-badge" id="roundBadge">Runde 1: L · N · O</div>
       <button class="home-btn" onclick="openWelcomeScreen()">Startseite</button>
     </div>
 
-    <div class="enclosures-layer" id="enclosuresLayer"></div>
-
-    <div class="pathway" id="pathway"></div>
+    <!-- Container für die 3 interaktiven Gehege-Zonen & laufenden Tiere -->
+    <div id="mapZonesLayer"></div>
+    <div id="walkersLayer"></div>
   </section>
 
   <!-- RUNDEN-ABSCHLUSS -->
@@ -371,7 +455,7 @@
   </div>
 
 <script>
-  // ================= TIERE & RUNDEN (27 TIERE -> assets/tiere/<id>.png) =================
+  // ================= TIERE & RUNDEN =================
   const ROUNDS = [
     {
       title: "Runde 1: L · N · O",
@@ -381,7 +465,7 @@
         { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙", imgSrc: "assets/tiere/lama.png",       audioSrc: "audio/lama.mp3" },
         { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱", imgSrc: "assets/tiere/luchs.png",      audioSrc: "audio/luchs.mp3" },
         { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏", imgSrc: "assets/tiere/nashorn.png",    audioSrc: "audio/nashorn.mp3" },
-        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: " hippo".trim(), imgSrc: "assets/tiere/nilpferd.png", audioSrc: "audio/nilpferd.mp3" },
+        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: "🦛", imgSrc: "assets/tiere/nilpferd.png",   audioSrc: "audio/nilpferd.mp3" },
         { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝", imgSrc: "assets/tiere/nasenbaer.png",  audioSrc: "audio/nasenbaer.mp3" },
         { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧", imgSrc: "assets/tiere/orang-utan.png", audioSrc: "audio/orang-utan.mp3" },
         { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙", imgSrc: "assets/tiere/oktopus.png",    audioSrc: "audio/oktopus.mp3" },
@@ -420,7 +504,6 @@
     }
   ];
 
-  // Ablenker-Tiere, die zwischendurch auf dem Weg vorbeilaufen
   const DECOY_POOL = [
     { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓", imgSrc: "assets/tiere/zebra.png",   audioSrc: "audio/zebra.mp3" },
     { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘", imgSrc: "assets/tiere/elefant.png", audioSrc: "audio/elefant.mp3" },
@@ -433,36 +516,7 @@
     "N": "Nnn", "O": "Ooo", "P": "P", "T": "T"
   };
 
-  // ================= SKIZZEN-ZAUN FÜR GEHEGE =================
-  function createEnclosureFenceSVG(variantIndex) {
-    // Drei leicht unterschiedliche Handzeichnungs-Gehege (Zaun, Pfosten, Striche)
-    const variants = [
-      `<svg class="enclosure-frame" viewBox="0 0 300 220" preserveAspectRatio="none">
-        <rect class="enclosure-fill" x="10" y="10" width="280" height="200" rx="22" />
-        <path d="M12,18 Q150,8 288,16 Q292,110 286,204 Q150,212 14,204 Q8,110 12,18 Z"
-              fill="none" stroke="#1e1e1e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M14,68 L286,66 M14,158 L286,156" fill="none" stroke="#1e1e1e" stroke-width="3" stroke-dasharray="12 6" stroke-linecap="round" />
-        <path d="M55,14 L54,206 M150,12 L151,208 M245,14 L246,206" fill="none" stroke="#1e1e1e" stroke-width="3.5" stroke-linecap="round" />
-      </svg>`,
-      `<svg class="enclosure-frame" viewBox="0 0 300 220" preserveAspectRatio="none">
-        <rect class="enclosure-fill" x="10" y="10" width="280" height="200" rx="22" />
-        <path d="M14,15 Q150,21 286,14 Q290,110 287,205 Q150,199 13,205 Q10,110 14,15 Z"
-              fill="none" stroke="#1e1e1e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M12,112 L288,114" fill="none" stroke="#1e1e1e" stroke-width="2.5" stroke-dasharray="10 8" stroke-linecap="round" />
-        <path d="M42,14 L43,206 M115,14 L114,206 M186,14 L187,206 M258,14 L257,206" fill="none" stroke="#1e1e1e" stroke-width="3.2" stroke-linecap="round" />
-      </svg>`,
-      `<svg class="enclosure-frame" viewBox="0 0 300 220" preserveAspectRatio="none">
-        <rect class="enclosure-fill" x="10" y="10" width="280" height="200" rx="22" />
-        <path d="M12,17 Q150,10 288,17 Q291,110 288,203 Q150,210 12,203 Q9,110 12,17 Z"
-              fill="none" stroke="#1e1e1e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M15,62 L285,64 M15,164 L285,162" fill="none" stroke="#1e1e1e" stroke-width="2.8" stroke-dasharray="14 7" stroke-linecap="round" />
-        <path d="M68,14 L67,206 M232,14 L233,206" fill="none" stroke="#1e1e1e" stroke-width="3.8" stroke-linecap="round" />
-      </svg>`
-    ];
-    return variants[variantIndex % variants.length];
-  }
-
-  // ================= AUDIO (ELEVENLABS MP3 + TTS FALLBACK) =================
+  // ================= AUDIO =================
   let currentAudio = null;
 
   function playSound({ mp3Path, fallbackText }) {
@@ -506,6 +560,22 @@
     });
   }
 
+  // ================= WEG-KURVE FÜR DIE TIERE =================
+  // Berechnet passend zum geschwungenen SVG-Weg die Y-Höhe aus der X-Position (0..1)
+  function getPathY(progressX, screenHeight) {
+    const t = Math.max(0, Math.min(1, progressX));
+    // Kubische Bezier-Kurve passend zum SVG-Pfad (M -30,415 C 190,395 310,335 495,355 C 675,375 795,485 1030,465)
+    let normY;
+    if (t < 0.5) {
+      const u = t * 2;
+      normY = (1 - u) * (1 - u) * 0.66 + 2 * (1 - u) * u * 0.56 + u * u * 0.57;
+    } else {
+      const u = (t - 0.5) * 2;
+      normY = (1 - u) * (1 - u) * 0.57 + 2 * (1 - u) * u * 0.72 + u * u * 0.74;
+    }
+    return normY * screenHeight - 52;
+  }
+
   // ================= SPIELZUSTAND =================
   let roundIndex = 0;
   let activeWalkers = [];
@@ -539,41 +609,36 @@
     placedCounts = {};
     round.letters.forEach(l => placedCounts[l] = 0);
 
-    const layer = document.getElementById('enclosuresLayer');
-    layer.innerHTML = '';
+    const zonesLayer = document.getElementById('mapZonesLayer');
+    zonesLayer.innerHTML = '';
 
     round.letters.forEach((letter, i) => {
-      const enc = document.createElement('div');
-      enc.className = 'enclosure';
-      enc.dataset.letter = letter;
-      enc.innerHTML = createEnclosureFenceSVG(i);
+      const zone = document.createElement('div');
+      zone.className = `map-zone map-zone-${i}`;
+      zone.dataset.letter = letter;
 
       const sign = document.createElement('button');
       sign.type = 'button';
-      sign.className = 'letter-sign';
+      sign.className = 'signpost-btn';
       sign.textContent = letter;
       sign.onclick = (e) => {
         e.stopPropagation();
         playLetterAudio(letter);
       };
-
-      const slotsBox = document.createElement('div');
-      slotsBox.className = 'slots-container';
+      zone.appendChild(sign);
 
       for (let s = 0; s < 3; s++) {
         const slot = document.createElement('div');
         slot.className = `slot slot-${s}`;
         slot.dataset.occupied = "false";
-        slotsBox.appendChild(slot);
+        zone.appendChild(slot);
       }
 
-      enc.appendChild(sign);
-      enc.appendChild(slotsBox);
-      layer.appendChild(enc);
+      zonesLayer.appendChild(zone);
     });
 
-    const pathway = document.getElementById('pathway');
-    pathway.innerHTML = '';
+    const walkersLayer = document.getElementById('walkersLayer');
+    walkersLayer.innerHTML = '';
     activeWalkers = [];
 
     const queue = [...round.animals].sort(() => Math.random() - 0.5);
@@ -582,7 +647,7 @@
     for (let i = 0; i < 3; i++) {
       const item = queue[queuePointer % queue.length];
       queuePointer++;
-      spawnWalker(item, 80 + i * 195);
+      spawnWalker(item, 90 + i * 210);
     }
 
     spawnTimer = setInterval(() => {
@@ -593,7 +658,7 @@
       const pickDecoy = Math.random() < 0.25;
       const sourceList = pickDecoy ? DECOY_POOL : remainingTarget;
       const nextAnimal = sourceList[Math.floor(Math.random() * sourceList.length)];
-      spawnWalker(nextAnimal, -115);
+      spawnWalker(nextAnimal, -110);
     }, 2400);
 
     lastFrameTime = performance.now();
@@ -605,11 +670,13 @@
   }
 
   function spawnWalker(data, startX) {
-    const pathway = document.getElementById('pathway');
+    const walkersLayer = document.getElementById('walkersLayer');
     const el = document.createElement('div');
     el.className = 'animal';
-    el.style.top = '12px';
+
+    const startY = getPathY(startX / window.innerWidth, window.innerHeight);
     el.style.left = `${startX}px`;
+    el.style.top = `${startY}px`;
 
     const fallbackSpan = document.createElement('span');
     fallbackSpan.className = 'animal-emoji';
@@ -628,7 +695,7 @@
     }
     el.appendChild(fallbackSpan);
 
-    pathway.appendChild(el);
+    walkersLayer.appendChild(el);
 
     const walker = {
       el,
@@ -662,37 +729,32 @@
       const rect = walker.el.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
-
-      walker.el.style.position = 'fixed';
-      walker.el.style.left = `${rect.left}px`;
-      walker.el.style.top = `${rect.top}px`;
-      document.body.appendChild(walker.el);
     });
 
     walker.el.addEventListener('pointermove', (e) => {
       if (!walker.dragging) return;
       walker.el.style.left = `${e.clientX - offsetX}px`;
       walker.el.style.top = `${e.clientY - offsetY}px`;
-      highlightEnclosureAt(e.clientX, e.clientY);
+      highlightZoneAt(e.clientX, e.clientY);
     });
 
     walker.el.addEventListener('pointerup', (e) => {
       if (!walker.dragging) return;
       walker.dragging = false;
       walker.el.classList.remove('dragging');
-      clearEnclosureHighlights();
+      clearZoneHighlights();
 
-      const targetEnc = findEnclosureAt(e.clientX, e.clientY);
-      if (targetEnc) {
-        const encLetter = targetEnc.dataset.letter;
-        const freeSlot = targetEnc.querySelector('.slot[data-occupied="false"]');
+      const targetZone = findZoneAt(e.clientX, e.clientY);
+      if (targetZone) {
+        const zoneLetter = targetZone.dataset.letter;
+        const freeSlot = targetZone.querySelector('.slot[data-occupied="false"]');
 
-        if (encLetter === walker.data.letter && freeSlot) {
-          snapIntoSlot(walker, targetEnc, freeSlot, encLetter);
+        if (zoneLetter === walker.data.letter && freeSlot) {
+          snapIntoSlot(walker, targetZone, freeSlot, zoneLetter);
           return;
         }
 
-        if (encLetter === walker.data.letter && !freeSlot) {
+        if (zoneLetter === walker.data.letter && !freeSlot) {
           playSound({
             mp3Path: "audio/voll.mp3",
             fallbackText: "Dieses Gehege ist schon voll."
@@ -705,62 +767,55 @@
         }
       }
 
-      returnToPathway(walker);
+      // Zurück auf den Weg
+      walker.x = Math.max(20, Math.min(window.innerWidth - 115, e.clientX - offsetX));
+      walker.el.style.left = `${walker.x}px`;
+      walker.el.style.top = `${getPathY(walker.x / window.innerWidth, window.innerHeight)}px`;
     });
   }
 
-  function snapIntoSlot(walker, enclosure, slot, letter) {
+  function snapIntoSlot(walker, zone, slot, letter) {
     walker.snapped = true;
     slot.dataset.occupied = "true";
     placedCounts[letter] = (placedCounts[letter] || 0) + 1;
 
     if (placedCounts[letter] >= 3) {
-      enclosure.classList.add('full');
+      zone.classList.add('full');
     }
 
     walker.el.classList.remove('dragging');
     walker.el.classList.add('snapped');
-    walker.el.style.position = 'static';
     walker.el.style.left = '';
     walker.el.style.top = '';
     slot.appendChild(walker.el);
 
     playSound({
       mp3Path: "audio/richtig.mp3",
-      fallbackText: `Super! ${walker.data.name} ist im Gehege.`
+      fallbackText: `Super! ${walker.data.name} ist angekommen.`
     });
 
     checkRoundComplete();
   }
 
-  function returnToPathway(walker) {
-    const pathway = document.getElementById('pathway');
-    walker.el.style.position = 'absolute';
-    walker.el.style.top = '12px';
-    walker.x = Math.max(20, Math.min(pathway.clientWidth - 115, walker.x));
-    walker.el.style.left = `${walker.x}px`;
-    pathway.appendChild(walker.el);
-  }
-
-  function findEnclosureAt(x, y) {
-    const enclosures = document.querySelectorAll('.enclosure');
-    for (const enc of enclosures) {
-      const r = enc.getBoundingClientRect();
+  function findZoneAt(x, y) {
+    const zones = document.querySelectorAll('.map-zone');
+    for (const z of zones) {
+      const r = z.getBoundingClientRect();
       if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
-        return enc;
+        return z;
       }
     }
     return null;
   }
 
-  function highlightEnclosureAt(x, y) {
-    clearEnclosureHighlights();
-    const enc = findEnclosureAt(x, y);
-    if (enc) enc.classList.add('highlight');
+  function highlightZoneAt(x, y) {
+    clearZoneHighlights();
+    const z = findZoneAt(x, y);
+    if (z) z.classList.add('highlight');
   }
 
-  function clearEnclosureHighlights() {
-    document.querySelectorAll('.enclosure.highlight').forEach(el => {
+  function clearZoneHighlights() {
+    document.querySelectorAll('.map-zone.highlight').forEach(el => {
       el.classList.remove('highlight');
     });
   }
@@ -781,7 +836,7 @@
     setTimeout(() => {
       playSound({
         mp3Path: "audio/gewonnen.mp3",
-        fallbackText: "Hurra! Alle Gehege sind voll!"
+        fallbackText: "Hurra! Alle Tiere sind wieder in ihren Gehegen!"
       });
       document.getElementById('roundCompleteBanner').classList.add('show');
     }, 650);
@@ -796,16 +851,17 @@
     const dt = (now - lastFrameTime) / 1000;
     lastFrameTime = now;
 
-    const pathway = document.getElementById('pathway');
-    const width = pathway ? pathway.clientWidth : window.innerWidth;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
     activeWalkers.forEach(w => {
       if (w.snapped || w.dragging) return;
       w.x += w.speed * dt;
       if (w.x > width + 40) {
-        w.x = -115;
+        w.x = -110;
       }
       w.el.style.left = `${w.x}px`;
+      w.el.style.top = `${getPathY(w.x / width, height)}px`;
     });
 
     rafId = requestAnimationFrame(loop);

@@ -299,7 +299,7 @@
     filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.22));
   }
 
-  /* Runden-Abschluss */
+  /* Runden-Abschluss mit Daumen hoch (ohne Text) */
   .round-complete-banner {
     display: none;
     position: fixed;
@@ -318,29 +318,39 @@
   .complete-card {
     background: var(--panel);
     border: 4px solid var(--ink);
-    border-radius: 32px;
-    padding: 28px 36px;
+    border-radius: 36px;
+    padding: 30px 44px;
     text-align: center;
     box-shadow: 0 10px 0 var(--ink);
-    max-width: 440px;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
   }
 
-  .complete-card h2 {
-    margin: 0 0 16px;
-    font-size: 2.2rem;
+  .thumbs-up-emoji {
+    font-size: clamp(5rem, 14vw, 7.5rem);
+    line-height: 1;
+    animation: popBounce 0.6s ease-out;
+  }
+
+  @keyframes popBounce {
+    0%   { transform: scale(0.4); }
+    65%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
   }
 
   .next-btn {
     background: var(--success);
     color: #fff;
     border: 3.5px solid var(--ink);
-    border-radius: 22px;
-    padding: 14px 28px;
-    font-size: 1.4rem;
+    border-radius: 24px;
+    padding: 14px 38px;
+    font-size: 2rem;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 6px 0 var(--ink);
+    touch-action: manipulation;
   }
 
   .next-btn:active {
@@ -353,8 +363,8 @@
 
   <!-- SCREEN 1: WILLKOMMEN -->
   <section id="welcomeScreen" class="screen active">
-    <img class="welcome-bg-img" src="Willkommen im Zoo (3).png" alt="Willkommen im Zoo Alarm"
-         onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='1.png';}else{this.style.display='none';}">
+    <img class="welcome-bg-img" src="./Willkommen im Zoo (3).png" alt="Willkommen im Zoo Alarm"
+         onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='./1.png';}else{this.style.display='none';}">
     <div class="welcome-controls">
       <button class="icon-btn" id="welcomeAudioBtn" aria-label="Text vorlesen" onclick="playWelcomeAudio()">🔊</button>
       <button class="start-btn" onclick="openGameScreen()">Start</button>
@@ -418,76 +428,100 @@
     <div id="walkersLayer"></div>
   </section>
 
-  <!-- RUNDEN-ABSCHLUSS -->
+  <!-- RUNDEN-ABSCHLUSS (DAUMEN HOCH + rundenende.mp3) -->
   <div class="round-complete-banner" id="roundCompleteBanner">
     <div class="complete-card">
-      <div style="font-size: 3.5rem;">🎉🦁🐢</div>
-      <h2>Super gemacht!</h2>
-      <button class="next-btn" onclick="nextRound()">Nächste Runde</button>
+      <div class="thumbs-up-emoji" aria-label="Super gemacht">👍</div>
+      <button class="next-btn" aria-label="Nächste Runde" onclick="nextRound()">➜</button>
     </div>
   </div>
 
 <script>
-  // ================= TIERE & RUNDEN (./<id>.png im Main) =================
+  // ================= TIERE & RUNDEN (ALLES DIREKT IM MAIN: ./<id>.png & ./<id>.mp3) =================
   const ROUNDS = [
     {
       title: "Runde 1: L · N · O",
       letters: ["L", "N", "O"],
       animals: [
-        { id: "loewe",      name: "Löwe",       letter: "L", emoji: "🦁", imgBase: "./loewe",      audioSrc: "audio/loewe.mp3" },
-        { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙", imgBase: "./lama",       audioSrc: "audio/lama.mp3" },
-        { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱", imgBase: "./luchs",      audioSrc: "audio/luchs.mp3" },
-        { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏", imgBase: "./nashorn",    audioSrc: "audio/nashorn.mp3" },
-        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: "🦛", imgBase: "./nilpferd",   audioSrc: "audio/nilpferd.mp3" },
-        { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝", imgBase: "./nasenbaer",  audioSrc: "audio/nasenbaer.mp3" },
-        { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧", imgBase: "./orang-utan", audioSrc: "audio/orang-utan.mp3" },
-        { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙", imgBase: "./oktopus",    audioSrc: "audio/oktopus.mp3" },
-        { id: "otter",      name: "Otter",      letter: "O", emoji: "🦦", imgBase: "./otter",      audioSrc: "audio/otter.mp3" }
+        { id: "loewe",      name: "Löwe",       letter: "L", emoji: "🦁" },
+        { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙" },
+        { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱" },
+        { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏" },
+        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: "🦛" },
+        { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝" },
+        { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧" },
+        { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙" },
+        { id: "otter",      name: "Otter",      letter: "O", emoji: "🦦" }
       ]
     },
     {
       title: "Runde 2: A · B · F",
       letters: ["A", "B", "F"],
       animals: [
-        { id: "ameisenbaer", name: "Ameisenbär", letter: "A", emoji: "🐾", imgBase: "./ameisenbaer", audioSrc: "audio/ameisenbaer.mp3" },
-        { id: "antilope",    name: "Antilope",   letter: "A", emoji: "🦌", imgBase: "./antilope",    audioSrc: "audio/antilope.mp3" },
-        { id: "anakonda",    name: "Anakonda",   letter: "A", emoji: "🐍", imgBase: "./anakonda",    audioSrc: "audio/anakonda.mp3" },
-        { id: "baer",        name: "Bär",        letter: "B", emoji: "🐻", imgBase: "./baer",        audioSrc: "audio/baer.mp3" },
-        { id: "biber",       name: "Biber",      letter: "B", emoji: "🦫", imgBase: "./biber",       audioSrc: "audio/biber.mp3" },
-        { id: "bonobo",      name: "Bonobo",     letter: "B", emoji: "🐒", imgBase: "./bonobo",      audioSrc: "audio/bonobo.mp3" },
-        { id: "flamingo",    name: "Flamingo",   letter: "F", emoji: "🦩", imgBase: "./flamingo",    audioSrc: "audio/flamingo.mp3" },
-        { id: "frosch",      name: "Frosch",     letter: "F", emoji: "🐸", imgBase: "./frosch",      audioSrc: "audio/frosch.mp3" },
-        { id: "fuchs",       name: "Fuchs",      letter: "F", emoji: "🦊", imgBase: "./fuchs",       audioSrc: "audio/fuchs.mp3" }
+        { id: "ameisenbaer", name: "Ameisenbär", letter: "A", emoji: "🐾" },
+        { id: "antilope",    name: "Antilope",   letter: "A", emoji: "🦌" },
+        { id: "anakonda",    name: "Anakonda",   letter: "A", emoji: "🐍" },
+        { id: "baer",        name: "Bär",        letter: "B", emoji: "🐻" },
+        { id: "biber",       name: "Biber",      letter: "B", emoji: "🦫" },
+        { id: "bonobo",      name: "Bonobo",     letter: "B", emoji: "🐒" },
+        { id: "flamingo",    name: "Flamingo",   letter: "F", emoji: "🦩" },
+        { id: "frosch",      name: "Frosch",     letter: "F", emoji: "🐸" },
+        { id: "fuchs",       name: "Fuchs",      letter: "F", emoji: "🦊" }
       ]
     },
     {
       title: "Runde 3: K · P · T",
       letters: ["K", "P", "T"],
       animals: [
-        { id: "krokodil", name: "Krokodil", letter: "K", emoji: "🐊", imgBase: "./krokodil", audioSrc: "audio/krokodil.mp3" },
-        { id: "koala",    name: "Koala",    letter: "K", emoji: "🐨", imgBase: "./koala",    audioSrc: "audio/koala.mp3" },
-        { id: "kamel",    name: "Kamel",    letter: "K", emoji: "🐪", imgBase: "./kamel",    audioSrc: "audio/kamel.mp3" },
-        { id: "pinguin",  name: "Pinguin",  letter: "P", emoji: "🐧", imgBase: "./pinguin",  audioSrc: "audio/pinguin.mp3" },
-        { id: "panda",    name: "Panda",    letter: "P", emoji: "🐼", imgBase: "./panda",    audioSrc: "audio/panda.mp3" },
-        { id: "papagei",  name: "Papagei",  letter: "P", emoji: "🦜", imgBase: "./papagei",  audioSrc: "audio/papagei.mp3" },
-        { id: "tiger",    name: "Tiger",    letter: "T", emoji: "🐯", imgBase: "./tiger",    audioSrc: "audio/tiger.mp3" },
-        { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗", imgBase: "./tapir",    audioSrc: "audio/tapir.mp3" },
-        { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦", imgBase: "./tukan",    audioSrc: "audio/tukan.mp3" }
+        { id: "krokodil", name: "Krokodil", letter: "K", emoji: "🐊" },
+        { id: "koala",    name: "Koala",    letter: "K", emoji: "🐨" },
+        { id: "kamel",    name: "Kamel",    letter: "K", emoji: "🐪" },
+        { id: "pinguin",  name: "Pinguin",  letter: "P", emoji: "🐧" },
+        { id: "panda",    name: "Panda",    letter: "P", emoji: "🐼" },
+        { id: "papagei",  name: "Papagei",  letter: "P", emoji: "🦜" },
+        { id: "tiger",    name: "Tiger",    letter: "T", emoji: "🐯" },
+        { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗" },
+        { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦" }
       ]
     }
   ];
 
   const DECOY_POOL = [
-    { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓", imgBase: "./zebra",   audioSrc: "audio/zebra.mp3" },
-    { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘", imgBase: "./elefant", audioSrc: "audio/elefant.mp3" },
-    { id: "giraffe", name: "Giraffe", letter: "G", emoji: "🦒", imgBase: "./giraffe", audioSrc: "audio/giraffe.mp3" },
-    { id: "wal",     name: "Wal",     letter: "W", emoji: "🐳", imgBase: "./wal",     audioSrc: "audio/wal.mp3" }
+    { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓" },
+    { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘" },
+    { id: "giraffe", name: "Giraffe", letter: "G", emoji: "🦒" },
+    { id: "wal",     name: "Wal",     letter: "W", emoji: "🐳" }
   ];
 
   const PHONETIC_FALLBACK = {
     "A": "Aaa", "B": "B", "F": "Fff", "K": "K", "L": "Lll",
     "N": "Nnn", "O": "Ooo", "P": "P", "T": "T"
   };
+
+  // Variable Feedback-Audios im main-Ordner
+  const POSITIVE_FEEDBACK = [
+    { mp3: "./super.mp3",   text: "Super!" },
+    { mp3: "./sehrgut.mp3", text: "Sehr gut!" },
+    { mp3: "./richtig.mp3", text: "Richtig!" }
+  ];
+
+  const NEGATIVE_FEEDBACK = [
+    { mp3: "./noe.mp3", text: "Nö." },
+    { mp3: "./nee.mp3", text: "Nee." },
+    { mp3: "./mm.mp3",  text: "Mm-mm." }
+  ];
+
+  let lastPositiveIdx = -1;
+  let lastNegativeIdx = -1;
+
+  function pickRandomItem(list, lastIdx) {
+    if (list.length === 1) return { item: list[0], idx: 0 };
+    let idx = Math.floor(Math.random() * list.length);
+    if (idx === lastIdx) {
+      idx = (idx + 1) % list.length;
+    }
+    return { item: list[idx], idx };
+  }
 
   // ================= AUDIO =================
   let currentAudio = null;
@@ -520,16 +554,34 @@
 
   function playWelcomeAudio() {
     playSound({
-      mp3Path: "audio/willkommen.mp3",
-      fallbackText: "Zoo Alarm! Leider sind unsere Tiere ausgebrochen. Hilf uns, sie wieder in die richtigen Gehege zu bringen."
+      mp3Path: "./willkommen.mp3",
+      fallbackText: "Hallo, Willkommen bei ZooAlarm. Leider sind alle unsere Tiere ausgebrochen. Hilf uns, sie wieder einzufangen."
     });
   }
 
   function playLetterAudio(letter) {
     const key = letter.toLowerCase();
     playSound({
-      mp3Path: `audio/laut_${key}.mp3`,
+      mp3Path: `./laut_${key}.mp3`,
       fallbackText: PHONETIC_FALLBACK[letter] || letter
+    });
+  }
+
+  function playPositiveFeedback() {
+    const picked = pickRandomItem(POSITIVE_FEEDBACK, lastPositiveIdx);
+    lastPositiveIdx = picked.idx;
+    playSound({
+      mp3Path: picked.item.mp3,
+      fallbackText: picked.item.text
+    });
+  }
+
+  function playNegativeFeedback() {
+    const picked = pickRandomItem(NEGATIVE_FEEDBACK, lastNegativeIdx);
+    lastNegativeIdx = picked.idx;
+    playSound({
+      mp3Path: picked.item.mp3,
+      fallbackText: picked.item.text
     });
   }
 
@@ -696,23 +748,21 @@
     const fallbackSpan = document.createElement('span');
     fallbackSpan.className = 'animal-emoji';
     fallbackSpan.textContent = data.emoji;
-    fallbackSpan.style.display = data.imgBase ? 'none' : 'inline';
+    fallbackSpan.style.display = 'none';
 
-    if (data.imgBase) {
-      const img = document.createElement('img');
-      img.src = `${data.imgBase}.png`;
-      img.alt = data.name;
-      img.onerror = () => {
-        if (!img.dataset.triedJpg) {
-          img.dataset.triedJpg = "1";
-          img.src = `${data.imgBase}.jpg`;
-        } else {
-          img.style.display = 'none';
-          fallbackSpan.style.display = 'inline';
-        }
-      };
-      el.appendChild(img);
-    }
+    const img = document.createElement('img');
+    img.src = `./${data.id}.png`;
+    img.alt = data.name;
+    img.onerror = () => {
+      if (!img.dataset.triedJpg) {
+        img.dataset.triedJpg = "1";
+        img.src = `./${data.id}.jpg`;
+      } else {
+        img.style.display = 'none';
+        fallbackSpan.style.display = 'inline';
+      }
+    };
+    el.appendChild(img);
     el.appendChild(fallbackSpan);
 
     walkersLayer.appendChild(el);
@@ -732,7 +782,7 @@
 
   function triggerTapFeedback(walker) {
     playSound({
-      mp3Path: walker.data.audioSrc,
+      mp3Path: `./${walker.data.id}.mp3`,
       fallbackText: walker.data.name
     });
     walker.el.classList.add('tapped');
@@ -840,19 +890,7 @@
           return;
         }
 
-        if (zoneLetter === walker.data.letter && (alreadyInSet || !freeSlot)) {
-          playSound({
-            mp3Path: "audio/voll.mp3",
-            fallbackText: alreadyInSet
-              ? `${walker.data.name} ist schon im Gehege.`
-              : "Dieses Gehege ist schon voll."
-          });
-        } else {
-          playSound({
-            mp3Path: "audio/falsch.mp3",
-            fallbackText: "Hier wohnt es nicht."
-          });
-        }
+        playNegativeFeedback();
       }
 
       const width = Math.max(320, window.innerWidth);
@@ -903,11 +941,7 @@
     walker.el.style.top = '';
     slot.appendChild(walker.el);
 
-    playSound({
-      mp3Path: "audio/richtig.mp3",
-      fallbackText: `Super! ${walker.data.name} ist im Gehege.`
-    });
-
+    playPositiveFeedback();
     checkRoundComplete();
   }
 
@@ -950,11 +984,11 @@
 
     setTimeout(() => {
       playSound({
-        mp3Path: "audio/gewonnen.mp3",
-        fallbackText: "Hurra! Alle Tiere sind wieder in ihren Gehegen!"
+        mp3Path: "./rundenende.mp3",
+        fallbackText: "Jetzt sind alle Tiere wieder im Gehege. Das hast du gut gemacht. Spiel noch eine Runde."
       });
       document.getElementById('roundCompleteBanner').classList.add('show');
-    }, 650);
+    }, 850);
   }
 
   function nextRound() {

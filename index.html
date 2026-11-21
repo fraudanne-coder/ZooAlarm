@@ -134,10 +134,8 @@
     top: 8px;
     left: 14px;
     right: 14px;
+    height: 44px;
     z-index: 25;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     pointer-events: none;
   }
 
@@ -146,16 +144,24 @@
   }
 
   .round-badge {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
     background: var(--panel);
     border: 3px solid var(--ink);
     border-radius: 999px;
-    padding: 5px 16px;
+    padding: 5px 18px;
     font-weight: bold;
     font-size: 1rem;
+    white-space: nowrap;
     box-shadow: 0 4px 0 var(--ink);
   }
 
   .home-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
     background: var(--panel);
     border: 3px solid var(--ink);
     border-radius: 16px;
@@ -169,8 +175,8 @@
   /* Drei Gehege-Zonen nebeneinander im oberen Bereich */
   .map-zone {
     position: absolute;
-    top: 12%;
-    height: 43%;
+    top: 13%;
+    height: 42%;
     width: 29.5%;
     z-index: 6;
     border-radius: 28px;
@@ -529,7 +535,9 @@
 
   // ================= WEG-KURVE FÜR DIE TIERE (UNTEN) =================
   function getPathY(progressX, screenHeight) {
-    const t = Math.max(0, Math.min(1, progressX));
+    const safeX = Number.isFinite(progressX) ? progressX : 0;
+    const safeH = Math.max(240, Number.isFinite(screenHeight) ? screenHeight : window.innerHeight);
+    const t = Math.max(0, Math.min(1, safeX));
     let normY;
     if (t < 0.5) {
       const u = t * 2;
@@ -538,7 +546,7 @@
       const u = (t - 0.5) * 2;
       normY = (1 - u) * (1 - u) * 0.64 + 2 * (1 - u) * u * 0.75 + u * u * 0.72;
     }
-    return normY * screenHeight - 52;
+    return normY * safeH - 52;
   }
 
   // ================= SPIELZUSTAND =================
@@ -549,6 +557,7 @@
   let rafId = null;
   let lastFrameTime = 0;
   let roundFinished = false;
+  let currentRoundData = null;
 
   const MIN_WALKER_GAP = 145;
   const HOLD_TO_DRAG_MS = 220;
@@ -573,6 +582,7 @@
     document.getElementById('roundCompleteBanner').classList.remove('show');
 
     const round = ROUNDS[idx % ROUNDS.length];
+    currentRoundData = round;
     document.getElementById('roundBadge').textContent = round.title;
 
     placedByLetter = {};
@@ -617,8 +627,9 @@
 
     spawnTimer = setInterval(() => {
       if (roundFinished) return;
+      ensureMinimumWalkers(round);
       trySpawnNextAnimal(round);
-    }, 1700);
+    }, 1500);
 
     lastFrameTime = performance.now();
     rafId = requestAnimationFrame(loop);
@@ -632,12 +643,30 @@
     return activeWalkers.some(w => !w.snapped && w.data.id === animalId);
   }
 
+  function ensureMinimumWalkers(round) {
+    const walkingList = activeWalkers.filter(w => !w.snapped);
+    if (walkingList.length >= 3) return;
+
+    const availableTargets = round.animals.filter(
+      a => !isAnimalAlreadyPlaced(a.id) && !isAnimalCurrentlyOnPath(a.id)
+    );
+    const pool = availableTargets.length > 0
+      ? availableTargets
+      : DECOY_POOL.filter(d => !isAnimalCurrentlyOnPath(d.id));
+
+    if (pool.length === 0) return;
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    const minX = walkingList.reduce((min, w) => Math.min(min, w.x), Infinity);
+    const startX = Number.isFinite(minX) ? Math.min(-75, minX - MIN_WALKER_GAP) : 40;
+    spawnWalker(chosen, Math.max(-85, startX));
+  }
+
   function trySpawnNextAnimal(round) {
     const walkingList = activeWalkers.filter(w => !w.snapped);
     if (walkingList.length >= 6) return;
 
     const leftmostX = walkingList.reduce((min, w) => Math.min(min, w.x), Infinity);
-    if (leftmostX < 40) return;
+    if (walkingList.length > 0 && leftmostX < 35) return;
 
     const availableTargets = round.animals.filter(
       a => !isAnimalAlreadyPlaced(a.id) && !isAnimalCurrentlyOnPath(a.id)
@@ -649,7 +678,7 @@
 
     const pool = useDecoy ? availableDecoys : availableTargets;
     const chosen = pool[Math.floor(Math.random() * pool.length)];
-    spawnWalker(chosen, -95);
+    spawnWalker(chosen, -80);
   }
 
   function spawnWalker(data, startX) {
@@ -657,8 +686,10 @@
     const el = document.createElement('div');
     el.className = 'animal';
 
-    const clampedX = Math.max(-95, startX);
-    const startY = getPathY(clampedX / window.innerWidth, window.innerHeight);
+    const width = Math.max(320, window.innerWidth);
+    const height = Math.max(240, window.innerHeight);
+    const clampedX = Math.max(-80, Math.min(width - 90, Number.isFinite(startX) ? startX : -80));
+    const startY = getPathY(clampedX / width, height);
     el.style.left = `${clampedX}px`;
     el.style.top = `${startY}px`;
 
@@ -751,10 +782,13 @@
       startClientY = e.clientY;
 
       const rect = walker.el.getBoundingClientRect();
-      offsetX = e.clientX - rect.left;
-      offsetY = e.clientY - rect.top;
+      offsetX = Number.isFinite(e.clientX - rect.left) ? e.clientX - rect.left : rect.width / 2;
+      offsetY = Number.isFinite(e.clientY - rect.top) ? e.clientY - rect.top : rect.height / 2;
 
-      walker.el.setPointerCapture(e.pointerId);
+      try {
+        walker.el.setPointerCapture(e.pointerId);
+      } catch (_) {}
+
       triggerTapFeedback(walker);
 
       clearHoldTimer();
@@ -821,11 +855,13 @@
         }
       }
 
-      // Sicher im sichtbaren Bereich des Weges absetzen (nie unter -80 px schieben)
-      const dropX = Math.max(20, Math.min(window.innerWidth - 120, e.clientX - offsetX));
+      const width = Math.max(320, window.innerWidth);
+      const height = Math.max(240, window.innerHeight);
+      const rawDropX = Number.isFinite(e.clientX - offsetX) ? (e.clientX - offsetX) : 40;
+      const dropX = Math.max(20, Math.min(width - 120, rawDropX));
       walker.x = findNonOverlappingX(walker, dropX);
       walker.el.style.left = `${walker.x}px`;
-      walker.el.style.top = `${getPathY(walker.x / window.innerWidth, window.innerHeight)}px`;
+      walker.el.style.top = `${getPathY(walker.x / width, height)}px`;
     }
 
     walker.el.addEventListener('pointerup', finishPointer);
@@ -833,23 +869,23 @@
   }
 
   function findNonOverlappingX(targetWalker, desiredX) {
-    let candidateX = Math.max(16, desiredX);
+    const width = Math.max(320, window.innerWidth);
+    let candidateX = Math.max(16, Math.min(width - 115, Number.isFinite(desiredX) ? desiredX : 40));
     const others = activeWalkers
-      .filter(w => w !== targetWalker && !w.snapped && !w.dragging)
+      .filter(w => w !== targetWalker && !w.snapped && !w.dragging && Number.isFinite(w.x))
       .sort((a, b) => a.x - b.x);
 
     for (const other of others) {
       if (Math.abs(candidateX - other.x) < MIN_WALKER_GAP) {
-        // Nur nach links ausweichen, solange es im sichtbaren Bereich bleibt
         const leftCandidate = other.x - MIN_WALKER_GAP;
-        if (leftCandidate >= 12) {
+        if (leftCandidate >= 14) {
           candidateX = leftCandidate;
         } else {
-          candidateX = Math.min(window.innerWidth - 120, other.x + MIN_WALKER_GAP);
+          candidateX = Math.min(width - 115, other.x + MIN_WALKER_GAP);
         }
       }
     }
-    return Math.max(12, candidateX);
+    return Math.max(14, Math.min(width - 115, candidateX));
   }
 
   function snapIntoSlot(walker, zone, slot, letter) {
@@ -876,6 +912,7 @@
   }
 
   function findZoneAt(x, y) {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
     const zones = document.querySelectorAll('.map-zone');
     for (const z of zones) {
       const r = z.getBoundingClientRect();
@@ -926,11 +963,16 @@
   }
 
   function loop(now) {
-    const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+    const rawDt = (now - lastFrameTime) / 1000;
+    const dt = Number.isFinite(rawDt) && rawDt > 0 ? Math.min(0.05, rawDt) : 0.016;
     lastFrameTime = now;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width = Math.max(320, window.innerWidth);
+    const height = Math.max(240, window.innerHeight);
+
+    if (!roundFinished && currentRoundData) {
+      ensureMinimumWalkers(currentRoundData);
+    }
 
     const moving = activeWalkers
       .filter(w => !w.snapped && !w.dragging)
@@ -938,28 +980,31 @@
 
     for (let i = 0; i < moving.length; i++) {
       const w = moving[i];
+      if (!Number.isFinite(w.x)) w.x = 40;
+
       let nextX = w.x + w.baseSpeed * dt;
 
       if (i > 0) {
         const ahead = moving[i - 1];
-        const maxAllowedX = ahead.x - MIN_WALKER_GAP;
-        if (nextX > maxAllowedX) {
-          nextX = maxAllowedX;
+        if (Number.isFinite(ahead.x)) {
+          const maxAllowedX = ahead.x - MIN_WALKER_GAP;
+          if (nextX > maxAllowedX) {
+            nextX = maxAllowedX;
+          }
         }
       }
 
-      if (nextX > width + 30) {
-        // Links neu einsetzen, aber nie weit ins Negative abdriften lassen
+      if (nextX > width + 20) {
         const leftmostOther = moving.reduce(
-          (min, other, idx) => (idx === i ? min : Math.min(min, other.x)),
+          (min, other, idx) => (idx === i || !Number.isFinite(other.x) ? min : Math.min(min, other.x)),
           Infinity
         );
-        nextX = leftmostOther < 50 ? Math.max(-95, leftmostOther - MIN_WALKER_GAP) : -95;
-        nextX = Math.max(-95, nextX);
+        nextX = Number.isFinite(leftmostOther) && leftmostOther < 40
+          ? Math.min(-75, leftmostOther - MIN_WALKER_GAP)
+          : -75;
       }
 
-      // Sicherstellen, dass kein Tier links außerhalb des Bildschirms verschwindet
-      w.x = Math.max(-95, nextX);
+      w.x = Math.max(-80, Math.min(width + 20, nextX));
       w.el.style.left = `${w.x}px`;
       w.el.style.top = `${getPathY(w.x / width, height)}px`;
     }

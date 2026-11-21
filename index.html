@@ -168,7 +168,6 @@
     box-shadow: 0 4px 0 var(--ink);
   }
 
-  /* Drei Gehege-Zonen passend zur Park-Karte */
   .map-zone {
     position: absolute;
     z-index: 6;
@@ -176,7 +175,6 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
-  /* Zone 0: Oben links (Braunes Wald-Gehege) */
   .map-zone-0 {
     left: 4.5%;
     top: 8.5%;
@@ -184,7 +182,6 @@
     height: 43%;
   }
 
-  /* Zone 1: Oben rechts (Gehege mit großer Wasserfläche) */
   .map-zone-1 {
     right: 4.5%;
     top: 8%;
@@ -192,7 +189,6 @@
     height: 44%;
   }
 
-  /* Zone 2: Unten links/mitte (Braunes Savannen-Gehege mit Wasserstelle) */
   .map-zone-2 {
     left: 8.5%;
     bottom: 3.5%;
@@ -209,7 +205,6 @@
     box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.78);
   }
 
-  /* Holz-Wegweiser für den Buchstaben */
   .signpost-btn {
     position: absolute;
     background: #f5deb3;
@@ -250,7 +245,6 @@
   .map-zone-1 .signpost-btn { top: -8px;  left: 39%; }
   .map-zone-2 .signpost-btn { top: -14px; left: 41%; }
 
-  /* 3 feste Plätze im Gehege */
   .slot {
     position: absolute;
     width: 30%;
@@ -264,7 +258,6 @@
   .slot-1 { right: 9%; top: 21%; }
   .slot-2 { left: 35%; bottom: 7%; }
 
-  /* Laufende Tiere auf dem Parkweg */
   .animal {
     position: fixed;
     width: clamp(82px, 11vw, 114px);
@@ -308,7 +301,6 @@
     filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.25));
   }
 
-  /* Runden-Abschluss Overlay */
   .round-complete-banner {
     display: none;
     position: fixed;
@@ -466,60 +458,60 @@
   </div>
 
 <script>
-  // ================= TIERE & RUNDEN (ORDNER: assets/<id>.png) =================
+  // ================= TIERE & RUNDEN (ORDNER: ./<id>.png im Main) =================
   const ROUNDS = [
     {
       title: "Runde 1: L · N · O",
       letters: ["L", "N", "O"],
       animals: [
-        { id: "loewe",      name: "Löwe",       letter: "L", emoji: "🦁", imgBase: "assets/loewe",      audioSrc: "audio/loewe.mp3" },
-        { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙", imgBase: "assets/lama",       audioSrc: "audio/lama.mp3" },
-        { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱", imgBase: "assets/luchs",      audioSrc: "audio/luchs.mp3" },
-        { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏", imgBase: "assets/nashorn",    audioSrc: "audio/nashorn.mp3" },
-        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: "🦛", imgBase: "assets/nilpferd",   audioSrc: "audio/nilpferd.mp3" },
-        { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝", imgBase: "assets/nasenbaer",  audioSrc: "audio/nasenbaer.mp3" },
-        { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧", imgBase: "assets/orang-utan", audioSrc: "audio/orang-utan.mp3" },
-        { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙", imgBase: "assets/oktopus",    audioSrc: "audio/oktopus.mp3" },
-        { id: "otter",      name: "Otter",      letter: "O", emoji: "🦦", imgBase: "assets/otter",      audioSrc: "audio/otter.mp3" }
+        { id: "loewe",      name: "Löwe",       letter: "L", emoji: "🦁", imgBase: "./loewe",      audioSrc: "audio/loewe.mp3" },
+        { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙", imgBase: "./lama",       audioSrc: "audio/lama.mp3" },
+        { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱", imgBase: "./luchs",      audioSrc: "audio/luchs.mp3" },
+        { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏", imgBase: "./nashorn",    audioSrc: "audio/nashorn.mp3" },
+        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: "🦛", imgBase: "./nilpferd",   audioSrc: "audio/nilpferd.mp3" },
+        { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝", imgBase: "./nasenbaer",  audioSrc: "audio/nasenbaer.mp3" },
+        { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧", imgBase: "./orang-utan", audioSrc: "audio/orang-utan.mp3" },
+        { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙", imgBase: "./oktopus",    audioSrc: "audio/oktopus.mp3" },
+        { id: "otter",      name: "Otter",      letter: "O", emoji: "🦦", imgBase: "./otter",      audioSrc: "audio/otter.mp3" }
       ]
     },
     {
       title: "Runde 2: A · B · F",
       letters: ["A", "B", "F"],
       animals: [
-        { id: "ameisenbaer", name: "Ameisenbär", letter: "A", emoji: "🐾", imgBase: "assets/ameisenbaer", audioSrc: "audio/ameisenbaer.mp3" },
-        { id: "antilope",    name: "Antilope",   letter: "A", emoji: "🦌", imgBase: "assets/antilope",    audioSrc: "audio/antilope.mp3" },
-        { id: "anakonda",    name: "Anakonda",   letter: "A", emoji: "🐍", imgBase: "assets/anakonda",    audioSrc: "audio/anakonda.mp3" },
-        { id: "baer",        name: "Bär",        letter: "B", emoji: "🐻", imgBase: "assets/baer",        audioSrc: "audio/baer.mp3" },
-        { id: "biber",       name: "Biber",      letter: "B", emoji: "🦫", imgBase: "assets/biber",       audioSrc: "audio/biber.mp3" },
-        { id: "bonobo",      name: "Bonobo",     letter: "B", emoji: "🐒", imgBase: "assets/bonobo",      audioSrc: "audio/bonobo.mp3" },
-        { id: "flamingo",    name: "Flamingo",   letter: "F", emoji: "🦩", imgBase: "assets/flamingo",    audioSrc: "audio/flamingo.mp3" },
-        { id: "frosch",      name: "Frosch",     letter: "F", emoji: "🐸", imgBase: "assets/frosch",      audioSrc: "audio/frosch.mp3" },
-        { id: "fuchs",       name: "Fuchs",      letter: "F", emoji: "🦊", imgBase: "assets/fuchs",       audioSrc: "audio/fuchs.mp3" }
+        { id: "ameisenbaer", name: "Ameisenbär", letter: "A", emoji: "🐾", imgBase: "./ameisenbaer", audioSrc: "audio/ameisenbaer.mp3" },
+        { id: "antilope",    name: "Antilope",   letter: "A", emoji: "🦌", imgBase: "./antilope",    audioSrc: "audio/antilope.mp3" },
+        { id: "anakonda",    name: "Anakonda",   letter: "A", emoji: "🐍", imgBase: "./anakonda",    audioSrc: "audio/anakonda.mp3" },
+        { id: "baer",        name: "Bär",        letter: "B", emoji: "🐻", imgBase: "./baer",        audioSrc: "audio/baer.mp3" },
+        { id: "biber",       name: "Biber",      letter: "B", emoji: "🦫", imgBase: "./biber",       audioSrc: "audio/biber.mp3" },
+        { id: "bonobo",      name: "Bonobo",     letter: "B", emoji: "🐒", imgBase: "./bonobo",      audioSrc: "audio/bonobo.mp3" },
+        { id: "flamingo",    name: "Flamingo",   letter: "F", emoji: "🦩", imgBase: "./flamingo",    audioSrc: "audio/flamingo.mp3" },
+        { id: "frosch",      name: "Frosch",     letter: "F", emoji: "🐸", imgBase: "./frosch",      audioSrc: "audio/frosch.mp3" },
+        { id: "fuchs",       name: "Fuchs",      letter: "F", emoji: "🦊", imgBase: "./fuchs",       audioSrc: "audio/fuchs.mp3" }
       ]
     },
     {
       title: "Runde 3: K · P · T",
       letters: ["K", "P", "T"],
       animals: [
-        { id: "krokodil", name: "Krokodil", letter: "K", emoji: "🐊", imgBase: "assets/krokodil", audioSrc: "audio/krokodil.mp3" },
-        { id: "koala",    name: "Koala",    letter: "K", emoji: "🐨", imgBase: "assets/koala",    audioSrc: "audio/koala.mp3" },
-        { id: "kamel",    name: "Kamel",    letter: "K", emoji: "🐪", imgBase: "assets/kamel",    audioSrc: "audio/kamel.mp3" },
-        { id: "pinguin",  name: "Pinguin",  letter: "P", emoji: "🐧", imgBase: "assets/pinguin",  audioSrc: "audio/pinguin.mp3" },
-        { id: "panda",    name: "Panda",    letter: "P", emoji: "🐼", imgBase: "assets/panda",    audioSrc: "audio/panda.mp3" },
-        { id: "papagei",  name: "Papagei",  letter: "P", emoji: "🦜", imgBase: "assets/papagei",  audioSrc: "audio/papagei.mp3" },
-        { id: "tiger",    name: "Tiger",    letter: "T", emoji: "🐯", imgBase: "assets/tiger",    audioSrc: "audio/tiger.mp3" },
-        { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗", imgBase: "assets/tapir",    audioSrc: "audio/tapir.mp3" },
-        { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦", imgBase: "assets/tukan",    audioSrc: "audio/tukan.mp3" }
+        { id: "krokodil", name: "Krokodil", letter: "K", emoji: "🐊", imgBase: "./krokodil", audioSrc: "audio/krokodil.mp3" },
+        { id: "koala",    name: "Koala",    letter: "K", emoji: "🐨", imgBase: "./koala",    audioSrc: "audio/koala.mp3" },
+        { id: "kamel",    name: "Kamel",    letter: "K", emoji: "🐪", imgBase: "./kamel",    audioSrc: "audio/kamel.mp3" },
+        { id: "pinguin",  name: "Pinguin",  letter: "P", emoji: "🐧", imgBase: "./pinguin",  audioSrc: "audio/pinguin.mp3" },
+        { id: "panda",    name: "Panda",    letter: "P", emoji: "🐼", imgBase: "./panda",    audioSrc: "audio/panda.mp3" },
+        { id: "papagei",  name: "Papagei",  letter: "P", emoji: "🦜", imgBase: "./papagei",  audioSrc: "audio/papagei.mp3" },
+        { id: "tiger",    name: "Tiger",    letter: "T", emoji: "🐯", imgBase: "./tiger",    audioSrc: "audio/tiger.mp3" },
+        { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗", imgBase: "./tapir",    audioSrc: "audio/tapir.mp3" },
+        { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦", imgBase: "./tukan",    audioSrc: "audio/tukan.mp3" }
       ]
     }
   ];
 
   const DECOY_POOL = [
-    { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓", imgBase: "assets/zebra",   audioSrc: "audio/zebra.mp3" },
-    { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘", imgBase: "assets/elefant", audioSrc: "audio/elefant.mp3" },
-    { id: "giraffe", name: "Giraffe", letter: "G", emoji: "🦒", imgBase: "assets/giraffe", audioSrc: "audio/giraffe.mp3" },
-    { id: "wal",     name: "Wal",     letter: "W", emoji: "🐳", imgBase: "assets/wal",     audioSrc: "audio/wal.mp3" }
+    { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓", imgBase: "./zebra",   audioSrc: "audio/zebra.mp3" },
+    { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘", imgBase: "./elefant", audioSrc: "audio/elefant.mp3" },
+    { id: "giraffe", name: "Giraffe", letter: "G", emoji: "🦒", imgBase: "./giraffe", audioSrc: "audio/giraffe.mp3" },
+    { id: "wal",     name: "Wal",     letter: "W", emoji: "🐳", imgBase: "./wal",     audioSrc: "audio/wal.mp3" }
   ];
 
   const PHONETIC_FALLBACK = {

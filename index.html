@@ -6,11 +6,11 @@
 <title>Anlaut-Zoo</title>
 <style>
   :root {
-    --zoo-yellow: #F9C81B;
+    --start-green: #42b82a;
+    --park-grass: #63b946;
     --ink: #1e1e1e;
     --panel: #fffdf5;
     --success: #22c55e;
-    --btn-blue: #2563eb;
   }
 
   * {
@@ -26,7 +26,7 @@
     width: 100%;
     height: 100dvh;
     overflow: hidden;
-    background-color: var(--zoo-yellow);
+    background-color: var(--start-green);
     font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
     color: var(--ink);
   }
@@ -43,13 +43,13 @@
     display: flex;
   }
 
-  /* ================= SCREEN 1: WILLKOMMEN ================= */
+  /* ================= SCREEN 1: WILLKOMMEN (ZOO ALARM) ================= */
   #welcomeScreen {
-    background-color: var(--zoo-yellow);
+    background-color: var(--start-green);
     flex-direction: column;
     justify-content: flex-end;
-    align-items: flex-start;
-    padding: clamp(20px, 5vw, 56px);
+    align-items: center;
+    padding: clamp(18px, 4vh, 42px);
   }
 
   .welcome-bg-img {
@@ -66,11 +66,11 @@
     position: relative;
     z-index: 5;
     display: flex;
-    gap: 18px;
+    gap: 20px;
     align-items: center;
-    background: rgba(249, 200, 27, 0.94);
-    padding: 14px 20px;
-    border-radius: 28px;
+    background: rgba(255, 253, 245, 0.94);
+    padding: 12px 22px;
+    border-radius: 30px;
     border: 3.5px solid var(--ink);
     box-shadow: 0 6px 0 var(--ink);
   }
@@ -97,12 +97,12 @@
 
   .start-btn {
     height: 68px;
-    padding: 0 34px;
+    padding: 0 38px;
     border-radius: 22px;
     border: 3.5px solid var(--ink);
     background: var(--success);
     color: #ffffff;
-    font-size: 1.7rem;
+    font-size: 1.75rem;
     font-weight: bold;
     letter-spacing: 0.5px;
     cursor: pointer;
@@ -115,23 +115,12 @@
     box-shadow: 0 1px 0 var(--ink);
   }
 
-  /* ================= SCREEN 2: ZOO-LANDKARTE ================= */
+  /* ================= SCREEN 2: VOGELPERSPEKTIVE-PARK ================= */
   #gameScreen {
-    background-color: var(--zoo-yellow);
+    background: radial-gradient(circle at 50% 45%, #74c954 0%, #57ab3c 100%);
     position: relative;
   }
 
-  .game-bg-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Illustrierte Zoo-Karte im Tusche-Stil */
   .zoo-map-svg {
     position: absolute;
     inset: 0;
@@ -179,56 +168,56 @@
     box-shadow: 0 4px 0 var(--ink);
   }
 
-  /* Drei frei auf der Karte positionierte Gehege-Zonen */
+  /* Drei Gehege-Zonen passend zur Park-Karte */
   .map-zone {
     position: absolute;
     z-index: 6;
-    border-radius: 46% 54% 48% 52% / 50% 44% 56% 50%;
-    transition: transform 0.15s ease, background 0.15s ease;
+    border-radius: 44% 56% 48% 52% / 50% 44% 56% 50%;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
-  /* Zone 0: Oben links (Wald-/Wiesen-Gehege) */
+  /* Zone 0: Oben links (Braunes Wald-Gehege) */
   .map-zone-0 {
-    left: 4%;
-    top: 10%;
+    left: 4.5%;
+    top: 8.5%;
     width: 38%;
+    height: 43%;
+  }
+
+  /* Zone 1: Oben rechts (Gehege mit großer Wasserfläche) */
+  .map-zone-1 {
+    right: 4.5%;
+    top: 8%;
+    width: 39%;
     height: 44%;
   }
 
-  /* Zone 1: Oben rechts (Teich-/Felsen-Gehege) */
-  .map-zone-1 {
-    right: 4%;
-    top: 9%;
-    width: 39%;
-    height: 45%;
-  }
-
-  /* Zone 2: Unten links/mitte (Savannen-/Hügel-Gehege) */
+  /* Zone 2: Unten links/mitte (Braunes Savannen-Gehege mit Wasserstelle) */
   .map-zone-2 {
-    left: 8%;
-    bottom: 5%;
-    width: 40%;
+    left: 8.5%;
+    bottom: 3.5%;
+    width: 41%;
     height: 36%;
   }
 
   .map-zone.highlight {
-    background: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.72);
     transform: scale(1.03);
   }
 
   .map-zone.full {
-    background: rgba(220, 252, 231, 0.35);
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.78);
   }
 
   /* Holz-Wegweiser für den Buchstaben */
   .signpost-btn {
     position: absolute;
-    background: #ffffff;
+    background: #f5deb3;
     border: 3.5px solid var(--ink);
     border-radius: 16px;
-    min-width: 64px;
-    padding: 3px 14px;
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    min-width: 66px;
+    padding: 3px 15px;
+    font-size: clamp(1.85rem, 4vw, 2.65rem);
     font-weight: bold;
     line-height: 1.1;
     text-align: center;
@@ -244,10 +233,12 @@
     bottom: -14px;
     left: 50%;
     transform: translateX(-50%);
-    width: 6px;
-    height: 12px;
-    background: var(--ink);
-    border-radius: 2px;
+    width: 7px;
+    height: 13px;
+    background: #6b4423;
+    border: 2px solid var(--ink);
+    border-top: none;
+    border-radius: 0 0 3px 3px;
   }
 
   .signpost-btn:active {
@@ -255,11 +246,11 @@
     box-shadow: 0 2px 0 var(--ink);
   }
 
-  .map-zone-0 .signpost-btn { top: -12px; left: 42%; }
-  .map-zone-1 .signpost-btn { top: -10px; left: 38%; }
-  .map-zone-2 .signpost-btn { top: -16px; left: 42%; }
+  .map-zone-0 .signpost-btn { top: -10px; left: 41%; }
+  .map-zone-1 .signpost-btn { top: -8px;  left: 39%; }
+  .map-zone-2 .signpost-btn { top: -14px; left: 41%; }
 
-  /* 3 feste Plätze auf der Wiese jeder Gehege-Insel */
+  /* 3 feste Plätze im Gehege */
   .slot {
     position: absolute;
     width: 30%;
@@ -269,15 +260,15 @@
     justify-content: center;
   }
 
-  .slot-0 { left: 10%; top: 24%; }
-  .slot-1 { right: 10%; top: 22%; }
-  .slot-2 { left: 35%; bottom: 8%; }
+  .slot-0 { left: 9%;  top: 23%; }
+  .slot-1 { right: 9%; top: 21%; }
+  .slot-2 { left: 35%; bottom: 7%; }
 
-  /* Laufende Tiere auf dem Zoo-Weg */
+  /* Laufende Tiere auf dem Parkweg */
   .animal {
     position: fixed;
-    width: clamp(82px, 11vw, 116px);
-    height: clamp(82px, 11vw, 116px);
+    width: clamp(82px, 11vw, 114px);
+    height: clamp(82px, 11vw, 114px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,8 +289,8 @@
     cursor: default;
     touch-action: auto;
     z-index: 8;
-    width: clamp(64px, 8.5vw, 94px);
-    height: clamp(64px, 8.5vw, 94px);
+    width: clamp(64px, 8.6vw, 94px);
+    height: clamp(64px, 8.6vw, 94px);
   }
 
   .animal img {
@@ -307,14 +298,14 @@
     height: 100%;
     object-fit: contain;
     pointer-events: none;
-    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.16));
+    filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.28));
   }
 
   .animal-emoji {
-    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-size: clamp(3.2rem, 6vw, 4.7rem);
     line-height: 1;
     pointer-events: none;
-    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.16));
+    filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.25));
   }
 
   /* Runden-Abschluss Overlay */
@@ -369,69 +360,90 @@
 </head>
 <body>
 
-  <!-- SCREEN 1: WILLKOMMEN -->
+  <!-- SCREEN 1: WILLKOMMEN (ZOO ALARM) -->
   <section id="welcomeScreen" class="screen active">
-    <img class="welcome-bg-img" src="1.png" alt="Willkommen im Zoo"
-         onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='1.PNG';}else{this.style.display='none';}">
+    <img class="welcome-bg-img" src="Willkommen im Zoo (3).png" alt="Willkommen im Zoo Alarm"
+         onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='1.png';}else{this.style.display='none';}">
     <div class="welcome-controls">
       <button class="icon-btn" id="welcomeAudioBtn" aria-label="Text vorlesen" onclick="playWelcomeAudio()">🔊</button>
       <button class="start-btn" onclick="openGameScreen()">Start</button>
     </div>
   </section>
 
-  <!-- SCREEN 2: ZOO-LANDKARTE -->
+  <!-- SCREEN 2: VOGELPERSPEKTIVE-PARK -->
   <section id="gameScreen" class="screen">
-    <img class="game-bg-img" src="2.png" alt=""
-         onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='2.PNG';}else{this.style.display='none';}">
-
-    <!-- Gezeichnete Zoo-Karte (Wege, 3 Gehege-Inseln, Bäume, Teich, Felsen) -->
     <svg class="zoo-map-svg" viewBox="0 0 1000 620" preserveAspectRatio="none">
-      <!-- Geschwungener Hauptweg durch den Zoo -->
+      <ellipse cx="500" cy="310" rx="480" ry="290" fill="#6cc44e" opacity="0.55" />
+      <circle cx="150" cy="360" r="95" fill="#52a438" opacity="0.35" />
+      <circle cx="860" cy="340" r="110" fill="#52a438" opacity="0.35" />
+
+      <path d="M 225,355 L 225,295" stroke="#e9d29c" stroke-width="34" stroke-linecap="round" />
+      <path d="M 745,365 L 745,295" stroke="#e9d29c" stroke-width="34" stroke-linecap="round" />
+      <path d="M 305,375 L 305,435" stroke="#e9d29c" stroke-width="34" stroke-linecap="round" />
+      <path d="M 555,372 C 625,445 645,530 620,630" fill="none" stroke="#e9d29c" stroke-width="30" stroke-linecap="round" />
+
       <path d="M -30,415 C 190,395 310,335 495,355 C 675,375 795,485 1030,465"
-            fill="none" stroke="#fff7d6" stroke-width="88" stroke-linecap="round" />
-      <path d="M -30,372 C 190,352 310,292 495,312 C 675,332 795,442 1030,422"
-            fill="none" stroke="#1e1e1e" stroke-width="3.5" stroke-dasharray="14 9" stroke-linecap="round" />
-      <path d="M -30,458 C 190,438 310,378 495,398 C 675,418 795,528 1030,508"
-            fill="none" stroke="#1e1e1e" stroke-width="3.5" stroke-dasharray="14 9" stroke-linecap="round" />
+            fill="none" stroke="#c9ad72" stroke-width="86" stroke-linecap="round" />
+      <path d="M -30,415 C 190,395 310,335 495,355 C 675,375 795,485 1030,465"
+            fill="none" stroke="#f2dfb3" stroke-width="74" stroke-linecap="round" />
+      <path d="M -30,376 C 190,356 310,296 495,316 C 675,336 795,446 1030,426"
+            fill="none" stroke="#8a6d3b" stroke-width="2.5" stroke-dasharray="10 8" stroke-linecap="round" />
+      <path d="M -30,454 C 190,434 310,374 495,394 C 675,414 795,524 1030,504"
+            fill="none" stroke="#8a6d3b" stroke-width="2.5" stroke-dasharray="10 8" stroke-linecap="round" />
 
-      <!-- Kleine Nebenwege zu den Gehege-Inseln -->
-      <path d="M 225,355 L 225,315 M 695,355 L 695,315 M 310,415 L 310,445"
-            stroke="#1e1e1e" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" />
+      <!-- GEHEGE 0 (Oben Links) -->
+      <path d="M 52,175 C 44,92 142,54 242,60 C 348,66 422,110 412,192 C 402,272 318,310 218,306 C 118,302 58,252 52,175 Z"
+            fill="#9e6b3b" stroke="#5c3a1d" stroke-width="6" />
+      <path d="M 66,176 C 60,104 148,70 240,75 C 336,80 404,118 395,190 C 386,260 310,294 218,290 C 126,286 72,244 66,176 Z"
+            fill="#b67e48" />
+      <ellipse cx="105" cy="242" rx="28" ry="15" fill="#4cc3f2" stroke="#2b7da3" stroke-width="2.5" />
 
-      <!-- INSEL 0 (Oben Links: Wald-/Wiesen-Bereich) -->
-      <path d="M 55,175 C 45,95 145,55 245,62 C 350,68 425,112 415,195 C 405,275 320,315 220,312 C 120,308 62,255 55,175 Z"
-            fill="#fffdf5" fill-opacity="0.72" stroke="#1e1e1e" stroke-width="4" stroke-linejoin="round" />
-      <!-- Deko: Bäumchen & Grasbüschel -->
-      <g transform="translate(88,108)" stroke="#1e1e1e" stroke-width="2.6" fill="#fffdf5">
-        <line x1="0" y1="14" x2="0" y2="30" />
-        <circle cx="0" cy="6" r="13" />
-        <circle cx="-9" cy="11" r="9" />
-        <circle cx="9" cy="11" r="9" />
-      </g>
-      <path d="M 355,255 l -4,-10 m 4,10 l 0,-12 m 0,12 l 5,-9" stroke="#1e1e1e" stroke-width="2.4" stroke-linecap="round" />
+      <!-- GEHEGE 1 (Oben Rechts) -->
+      <path d="M 572,165 C 566,82 662,48 772,54 C 882,60 960,106 952,190 C 944,272 862,312 758,308 C 654,304 578,246 572,165 Z"
+            fill="#9e6b3b" stroke="#5c3a1d" stroke-width="6" />
+      <path d="M 586,166 C 580,94 668,64 770,70 C 872,75 944,114 936,188 C 928,260 854,296 758,292 C 662,288 592,238 586,166 Z"
+            fill="#b67e48" />
+      <path d="M 775,188 C 770,145 832,126 882,144 C 924,160 926,225 884,254 C 842,282 780,248 775,188 Z"
+            fill="#4cc3f2" stroke="#2b7da3" stroke-width="3" />
+      <path d="M 805,182 Q 832,175 858,182 M 818,215 Q 848,208 874,215"
+            fill="none" stroke="#bae6fd" stroke-width="2.5" stroke-linecap="round" />
 
-      <!-- INSEL 1 (Oben Rechts: Teich-/Felsen-Bereich) -->
-      <path d="M 575,165 C 570,82 665,50 775,56 C 885,62 962,108 955,192 C 948,274 865,314 760,310 C 655,306 580,248 575,165 Z"
-            fill="#fffdf5" fill-opacity="0.72" stroke="#1e1e1e" stroke-width="4" stroke-linejoin="round" />
-      <!-- Deko: Kleiner Teich & Stein -->
-      <ellipse cx="885" cy="245" rx="34" ry="18" fill="#e0f2fe" stroke="#1e1e1e" stroke-width="2.6" />
-      <path d="M 870,245 Q 885,240 900,245" fill="none" stroke="#1e1e1e" stroke-width="1.8" />
-      <path d="M 605,112 C 605,96 632,96 635,112 Z" fill="#e2e8f0" stroke="#1e1e1e" stroke-width="2.5" />
+      <!-- GEHEGE 2 (Unten Links/Mitte) -->
+      <path d="M 92,498 C 88,434 182,408 288,412 C 394,416 476,448 470,512 C 464,576 376,602 272,598 C 168,594 96,560 92,498 Z"
+            fill="#9e6b3b" stroke="#5c3a1d" stroke-width="6" />
+      <path d="M 106,498 C 102,444 188,422 288,426 C 386,430 460,456 454,510 C 448,566 368,588 272,584 C 176,580 110,552 106,498 Z"
+            fill="#b67e48" />
+      <ellipse cx="402" cy="528" rx="38" ry="22" fill="#4cc3f2" stroke="#2b7da3" stroke-width="2.5" />
+      <path d="M 384,526 Q 402,520 420,526" fill="none" stroke="#bae6fd" stroke-width="2" stroke-linecap="round" />
 
-      <!-- INSEL 2 (Unten Links/Mitte: Hügel-Bereich) -->
-      <path d="M 95,495 C 90,432 185,405 290,410 C 395,415 478,448 472,512 C 466,576 378,602 275,598 C 172,594 100,558 95,495 Z"
-            fill="#fffdf5" fill-opacity="0.72" stroke="#1e1e1e" stroke-width="4" stroke-linejoin="round" />
-      <!-- Deko: Kleiner Busch & Gras -->
-      <path d="M 128,548 C 122,534 142,528 148,538 C 156,528 174,536 168,548 Z"
-            fill="#fffdf5" stroke="#1e1e1e" stroke-width="2.5" stroke-linejoin="round" />
-      <path d="M 422,542 l -4,-10 m 4,10 l 0,-12 m 0,12 l 5,-9" stroke="#1e1e1e" stroke-width="2.4" stroke-linecap="round" />
+      <path d="M 735,545 C 730,512 788,498 835,512 C 882,526 888,574 842,592 C 796,610 740,582 735,545 Z"
+            fill="#38bdf8" stroke="#1d6f96" stroke-width="3.5" />
+      <path d="M 768,546 Q 800,538 832,546" fill="none" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" />
 
-      <!-- Kleine Zoo-Deko rechts unten (Eingangstor / Schild) -->
-      <g transform="translate(650,535)" stroke="#1e1e1e" stroke-width="2.6" fill="#fffdf5">
-        <line x1="0" y1="12" x2="0" y2="32" />
-        <circle cx="0" cy="4" r="14" />
-        <line x1="26" y1="16" x2="26" y2="32" />
-        <circle cx="26" cy="9" r="11" />
+      <g>
+        <circle cx="48" cy="316" r="24" fill="#2d6a22" />
+        <circle cx="44" cy="312" r="21" fill="#3f8f2f" />
+        <circle cx="86" cy="342" r="19" fill="#2d6a22" />
+        <circle cx="83" cy="339" r="16" fill="#4ca638" />
+
+        <circle cx="478" cy="115" r="26" fill="#2d6a22" />
+        <circle cx="474" cy="111" r="23" fill="#3f8f2f" />
+        <circle cx="518" cy="148" r="21" fill="#2d6a22" />
+        <circle cx="515" cy="145" r="18" fill="#4ca638" />
+        <circle cx="482" cy="195" r="22" fill="#2d6a22" />
+        <circle cx="479" cy="192" r="19" fill="#3a842b" />
+
+        <circle cx="945" cy="335" r="25" fill="#2d6a22" />
+        <circle cx="941" cy="331" r="22" fill="#3f8f2f" />
+        <circle cx="902" cy="368" r="18" fill="#2d6a22" />
+        <circle cx="899" cy="365" r="15" fill="#4ca638" />
+
+        <circle cx="535" cy="515" r="24" fill="#2d6a22" />
+        <circle cx="531" cy="511" r="21" fill="#3f8f2f" />
+        <circle cx="685" cy="515" r="21" fill="#2d6a22" />
+        <circle cx="682" cy="512" r="18" fill="#4ca638" />
+        <circle cx="935" cy="555" r="26" fill="#2d6a22" />
+        <circle cx="931" cy="551" r="23" fill="#3f8f2f" />
       </g>
     </svg>
 
@@ -440,7 +452,6 @@
       <button class="home-btn" onclick="openWelcomeScreen()">Startseite</button>
     </div>
 
-    <!-- Container für die 3 interaktiven Gehege-Zonen & laufenden Tiere -->
     <div id="mapZonesLayer"></div>
     <div id="walkersLayer"></div>
   </section>
@@ -455,60 +466,60 @@
   </div>
 
 <script>
-  // ================= TIERE & RUNDEN =================
+  // ================= TIERE & RUNDEN (ORDNER: assets/<id>.png) =================
   const ROUNDS = [
     {
       title: "Runde 1: L · N · O",
       letters: ["L", "N", "O"],
       animals: [
-        { id: "loewe",      name: "Löwe",       letter: "L", emoji: "🦁", imgSrc: "assets/tiere/loewe.png",      audioSrc: "audio/loewe.mp3" },
-        { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙", imgSrc: "assets/tiere/lama.png",       audioSrc: "audio/lama.mp3" },
-        { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱", imgSrc: "assets/tiere/luchs.png",      audioSrc: "audio/luchs.mp3" },
-        { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏", imgSrc: "assets/tiere/nashorn.png",    audioSrc: "audio/nashorn.mp3" },
-        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: "🦛", imgSrc: "assets/tiere/nilpferd.png",   audioSrc: "audio/nilpferd.mp3" },
-        { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝", imgSrc: "assets/tiere/nasenbaer.png",  audioSrc: "audio/nasenbaer.mp3" },
-        { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧", imgSrc: "assets/tiere/orang-utan.png", audioSrc: "audio/orang-utan.mp3" },
-        { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙", imgSrc: "assets/tiere/oktopus.png",    audioSrc: "audio/oktopus.mp3" },
-        { id: "otter",      name: "Otter",      letter: "O", emoji: "🦦", imgSrc: "assets/tiere/otter.png",      audioSrc: "audio/otter.mp3" }
+        { id: "loewe",      name: "Löwe",       letter: "L", emoji: "🦁", imgBase: "assets/loewe",      audioSrc: "audio/loewe.mp3" },
+        { id: "lama",       name: "Lama",       letter: "L", emoji: "🦙", imgBase: "assets/lama",       audioSrc: "audio/lama.mp3" },
+        { id: "luchs",      name: "Luchs",      letter: "L", emoji: "🐱", imgBase: "assets/luchs",      audioSrc: "audio/luchs.mp3" },
+        { id: "nashorn",    name: "Nashorn",    letter: "N", emoji: "🦏", imgBase: "assets/nashorn",    audioSrc: "audio/nashorn.mp3" },
+        { id: "nilpferd",   name: "Nilpferd",   letter: "N", emoji: "🦛", imgBase: "assets/nilpferd",   audioSrc: "audio/nilpferd.mp3" },
+        { id: "nasenbaer",  name: "Nasenbär",   letter: "N", emoji: "🦝", imgBase: "assets/nasenbaer",  audioSrc: "audio/nasenbaer.mp3" },
+        { id: "orang-utan", name: "Orang-Utan", letter: "O", emoji: "🦧", imgBase: "assets/orang-utan", audioSrc: "audio/orang-utan.mp3" },
+        { id: "oktopus",    name: "Oktopus",    letter: "O", emoji: "🐙", imgBase: "assets/oktopus",    audioSrc: "audio/oktopus.mp3" },
+        { id: "otter",      name: "Otter",      letter: "O", emoji: "🦦", imgBase: "assets/otter",      audioSrc: "audio/otter.mp3" }
       ]
     },
     {
       title: "Runde 2: A · B · F",
       letters: ["A", "B", "F"],
       animals: [
-        { id: "ameisenbaer", name: "Ameisenbär", letter: "A", emoji: "🐾", imgSrc: "assets/tiere/ameisenbaer.png", audioSrc: "audio/ameisenbaer.mp3" },
-        { id: "antilope",    name: "Antilope",   letter: "A", emoji: "🦌", imgSrc: "assets/tiere/antilope.png",    audioSrc: "audio/antilope.mp3" },
-        { id: "anakonda",    name: "Anakonda",   letter: "A", emoji: "🐍", imgSrc: "assets/tiere/anakonda.png",    audioSrc: "audio/anakonda.mp3" },
-        { id: "baer",        name: "Bär",        letter: "B", emoji: "🐻", imgSrc: "assets/tiere/baer.png",        audioSrc: "audio/baer.mp3" },
-        { id: "biber",       name: "Biber",      letter: "B", emoji: "🦫", imgSrc: "assets/tiere/biber.png",       audioSrc: "audio/biber.mp3" },
-        { id: "bonobo",      name: "Bonobo",     letter: "B", emoji: "🐒", imgSrc: "assets/tiere/bonobo.png",      audioSrc: "audio/bonobo.mp3" },
-        { id: "flamingo",    name: "Flamingo",   letter: "F", emoji: "🦩", imgSrc: "assets/tiere/flamingo.png",    audioSrc: "audio/flamingo.mp3" },
-        { id: "frosch",      name: "Frosch",     letter: "F", emoji: "🐸", imgSrc: "assets/tiere/frosch.png",      audioSrc: "audio/frosch.mp3" },
-        { id: "fuchs",       name: "Fuchs",      letter: "F", emoji: "🦊", imgSrc: "assets/tiere/fuchs.png",       audioSrc: "audio/fuchs.mp3" }
+        { id: "ameisenbaer", name: "Ameisenbär", letter: "A", emoji: "🐾", imgBase: "assets/ameisenbaer", audioSrc: "audio/ameisenbaer.mp3" },
+        { id: "antilope",    name: "Antilope",   letter: "A", emoji: "🦌", imgBase: "assets/antilope",    audioSrc: "audio/antilope.mp3" },
+        { id: "anakonda",    name: "Anakonda",   letter: "A", emoji: "🐍", imgBase: "assets/anakonda",    audioSrc: "audio/anakonda.mp3" },
+        { id: "baer",        name: "Bär",        letter: "B", emoji: "🐻", imgBase: "assets/baer",        audioSrc: "audio/baer.mp3" },
+        { id: "biber",       name: "Biber",      letter: "B", emoji: "🦫", imgBase: "assets/biber",       audioSrc: "audio/biber.mp3" },
+        { id: "bonobo",      name: "Bonobo",     letter: "B", emoji: "🐒", imgBase: "assets/bonobo",      audioSrc: "audio/bonobo.mp3" },
+        { id: "flamingo",    name: "Flamingo",   letter: "F", emoji: "🦩", imgBase: "assets/flamingo",    audioSrc: "audio/flamingo.mp3" },
+        { id: "frosch",      name: "Frosch",     letter: "F", emoji: "🐸", imgBase: "assets/frosch",      audioSrc: "audio/frosch.mp3" },
+        { id: "fuchs",       name: "Fuchs",      letter: "F", emoji: "🦊", imgBase: "assets/fuchs",       audioSrc: "audio/fuchs.mp3" }
       ]
     },
     {
       title: "Runde 3: K · P · T",
       letters: ["K", "P", "T"],
       animals: [
-        { id: "krokodil", name: "Krokodil", letter: "K", emoji: "🐊", imgSrc: "assets/tiere/krokodil.png", audioSrc: "audio/krokodil.mp3" },
-        { id: "koala",    name: "Koala",    letter: "K", emoji: "🐨", imgSrc: "assets/tiere/koala.png",    audioSrc: "audio/koala.mp3" },
-        { id: "kamel",    name: "Kamel",    letter: "K", emoji: "🐪", imgSrc: "assets/tiere/kamel.png",    audioSrc: "audio/kamel.mp3" },
-        { id: "pinguin",  name: "Pinguin",  letter: "P", emoji: "🐧", imgSrc: "assets/tiere/pinguin.png",  audioSrc: "audio/pinguin.mp3" },
-        { id: "panda",    name: "Panda",    letter: "P", emoji: "🐼", imgSrc: "assets/tiere/panda.png",    audioSrc: "audio/panda.mp3" },
-        { id: "papagei",  name: "Papagei",  letter: "P", emoji: "🦜", imgSrc: "assets/tiere/papagei.png",  audioSrc: "audio/papagei.mp3" },
-        { id: "tiger",    name: "Tiger",    letter: "T", emoji: "🐯", imgSrc: "assets/tiere/tiger.png",    audioSrc: "audio/tiger.mp3" },
-        { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗", imgSrc: "assets/tiere/tapir.png",    audioSrc: "audio/tapir.mp3" },
-        { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦", imgSrc: "assets/tiere/tukan.png",    audioSrc: "audio/tukan.mp3" }
+        { id: "krokodil", name: "Krokodil", letter: "K", emoji: "🐊", imgBase: "assets/krokodil", audioSrc: "audio/krokodil.mp3" },
+        { id: "koala",    name: "Koala",    letter: "K", emoji: "🐨", imgBase: "assets/koala",    audioSrc: "audio/koala.mp3" },
+        { id: "kamel",    name: "Kamel",    letter: "K", emoji: "🐪", imgBase: "assets/kamel",    audioSrc: "audio/kamel.mp3" },
+        { id: "pinguin",  name: "Pinguin",  letter: "P", emoji: "🐧", imgBase: "assets/pinguin",  audioSrc: "audio/pinguin.mp3" },
+        { id: "panda",    name: "Panda",    letter: "P", emoji: "🐼", imgBase: "assets/panda",    audioSrc: "audio/panda.mp3" },
+        { id: "papagei",  name: "Papagei",  letter: "P", emoji: "🦜", imgBase: "assets/papagei",  audioSrc: "audio/papagei.mp3" },
+        { id: "tiger",    name: "Tiger",    letter: "T", emoji: "🐯", imgBase: "assets/tiger",    audioSrc: "audio/tiger.mp3" },
+        { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗", imgBase: "assets/tapir",    audioSrc: "audio/tapir.mp3" },
+        { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦", imgBase: "assets/tukan",    audioSrc: "audio/tukan.mp3" }
       ]
     }
   ];
 
   const DECOY_POOL = [
-    { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓", imgSrc: "assets/tiere/zebra.png",   audioSrc: "audio/zebra.mp3" },
-    { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘", imgSrc: "assets/tiere/elefant.png", audioSrc: "audio/elefant.mp3" },
-    { id: "giraffe", name: "Giraffe", letter: "G", emoji: "🦒", imgSrc: "assets/tiere/giraffe.png", audioSrc: "audio/giraffe.mp3" },
-    { id: "wal",     name: "Wal",     letter: "W", emoji: "🐳", imgSrc: "assets/tiere/wal.png",     audioSrc: "audio/wal.mp3" }
+    { id: "zebra",   name: "Zebra",   letter: "Z", emoji: "🦓", imgBase: "assets/zebra",   audioSrc: "audio/zebra.mp3" },
+    { id: "elefant", name: "Elefant", letter: "E", emoji: "🐘", imgBase: "assets/elefant", audioSrc: "audio/elefant.mp3" },
+    { id: "giraffe", name: "Giraffe", letter: "G", emoji: "🦒", imgBase: "assets/giraffe", audioSrc: "audio/giraffe.mp3" },
+    { id: "wal",     name: "Wal",     letter: "W", emoji: "🐳", imgBase: "assets/wal",     audioSrc: "audio/wal.mp3" }
   ];
 
   const PHONETIC_FALLBACK = {
@@ -548,7 +559,7 @@
   function playWelcomeAudio() {
     playSound({
       mp3Path: "audio/willkommen.mp3",
-      fallbackText: "Willkommen im Zoo! Leider sind unsere Tiere ausgebrochen. Hilf uns, sie wieder einzufangen."
+      fallbackText: "Zoo Alarm! Leider sind unsere Tiere ausgebrochen. Hilf uns, sie wieder in die richtigen Gehege zu bringen."
     });
   }
 
@@ -561,10 +572,8 @@
   }
 
   // ================= WEG-KURVE FÜR DIE TIERE =================
-  // Berechnet passend zum geschwungenen SVG-Weg die Y-Höhe aus der X-Position (0..1)
   function getPathY(progressX, screenHeight) {
     const t = Math.max(0, Math.min(1, progressX));
-    // Kubische Bezier-Kurve passend zum SVG-Pfad (M -30,415 C 190,395 310,335 495,355 C 675,375 795,485 1030,465)
     let normY;
     if (t < 0.5) {
       const u = t * 2;
@@ -579,11 +588,13 @@
   // ================= SPIELZUSTAND =================
   let roundIndex = 0;
   let activeWalkers = [];
-  let placedCounts = {};
+  let placedByLetter = {};
   let spawnTimer = null;
   let rafId = null;
   let lastFrameTime = 0;
   let roundFinished = false;
+
+  const MIN_WALKER_GAP = 145;
 
   function openWelcomeScreen() {
     stopLoop();
@@ -606,8 +617,8 @@
     const round = ROUNDS[idx % ROUNDS.length];
     document.getElementById('roundBadge').textContent = round.title;
 
-    placedCounts = {};
-    round.letters.forEach(l => placedCounts[l] = 0);
+    placedByLetter = {};
+    round.letters.forEach(l => placedByLetter[l] = new Set());
 
     const zonesLayer = document.getElementById('mapZonesLayer');
     zonesLayer.innerHTML = '';
@@ -641,32 +652,44 @@
     walkersLayer.innerHTML = '';
     activeWalkers = [];
 
-    const queue = [...round.animals].sort(() => Math.random() - 0.5);
-    let queuePointer = 0;
-
-    for (let i = 0; i < 3; i++) {
-      const item = queue[queuePointer % queue.length];
-      queuePointer++;
-      spawnWalker(item, 90 + i * 210);
-    }
+    const initialPool = [...round.animals].sort(() => Math.random() - 0.5).slice(0, 3);
+    initialPool.forEach((item, i) => {
+      spawnWalker(item, 60 + i * 240);
+    });
 
     spawnTimer = setInterval(() => {
       if (roundFinished) return;
-      const remainingTarget = round.animals.filter(a => !isAnimalSnapped(a.id));
-      if (remainingTarget.length === 0) return;
-
-      const pickDecoy = Math.random() < 0.25;
-      const sourceList = pickDecoy ? DECOY_POOL : remainingTarget;
-      const nextAnimal = sourceList[Math.floor(Math.random() * sourceList.length)];
-      spawnWalker(nextAnimal, -110);
-    }, 2400);
+      trySpawnNextAnimal(round);
+    }, 1700);
 
     lastFrameTime = performance.now();
     rafId = requestAnimationFrame(loop);
   }
 
-  function isAnimalSnapped(animalId) {
-    return activeWalkers.some(w => w.data.id === animalId && w.snapped);
+  function isAnimalAlreadyPlaced(animalId) {
+    return Object.values(placedByLetter).some(set => set.has(animalId));
+  }
+
+  function isAnimalCurrentlyOnPath(animalId) {
+    return activeWalkers.some(w => !w.snapped && w.data.id === animalId);
+  }
+
+  function trySpawnNextAnimal(round) {
+    const walkingList = activeWalkers.filter(w => !w.snapped && !w.dragging);
+    const leftmostX = walkingList.reduce((min, w) => Math.min(min, w.x), Infinity);
+    if (leftmostX < 45) return;
+
+    const availableTargets = round.animals.filter(
+      a => !isAnimalAlreadyPlaced(a.id) && !isAnimalCurrentlyOnPath(a.id)
+    );
+    if (availableTargets.length === 0) return;
+
+    const availableDecoys = DECOY_POOL.filter(d => !isAnimalCurrentlyOnPath(d.id));
+    const useDecoy = availableDecoys.length > 0 && Math.random() < 0.25;
+
+    const pool = useDecoy ? availableDecoys : availableTargets;
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    spawnWalker(chosen, -110);
   }
 
   function spawnWalker(data, startX) {
@@ -681,15 +704,20 @@
     const fallbackSpan = document.createElement('span');
     fallbackSpan.className = 'animal-emoji';
     fallbackSpan.textContent = data.emoji;
-    fallbackSpan.style.display = data.imgSrc ? 'none' : 'inline';
+    fallbackSpan.style.display = data.imgBase ? 'none' : 'inline';
 
-    if (data.imgSrc) {
+    if (data.imgBase) {
       const img = document.createElement('img');
-      img.src = data.imgSrc;
+      img.src = `${data.imgBase}.png`;
       img.alt = data.name;
       img.onerror = () => {
-        img.style.display = 'none';
-        fallbackSpan.style.display = 'inline';
+        if (!img.dataset.triedJpg) {
+          img.dataset.triedJpg = "1";
+          img.src = `${data.imgBase}.jpg`;
+        } else {
+          img.style.display = 'none';
+          fallbackSpan.style.display = 'inline';
+        }
       };
       el.appendChild(img);
     }
@@ -701,7 +729,7 @@
       el,
       data,
       x: startX,
-      speed: 55 + Math.random() * 25,
+      baseSpeed: 64,
       snapped: false,
       dragging: false
     };
@@ -747,39 +775,61 @@
       const targetZone = findZoneAt(e.clientX, e.clientY);
       if (targetZone) {
         const zoneLetter = targetZone.dataset.letter;
+        const alreadyInSet = placedByLetter[zoneLetter]?.has(walker.data.id);
         const freeSlot = targetZone.querySelector('.slot[data-occupied="false"]');
 
-        if (zoneLetter === walker.data.letter && freeSlot) {
+        if (zoneLetter === walker.data.letter && !alreadyInSet && freeSlot) {
           snapIntoSlot(walker, targetZone, freeSlot, zoneLetter);
           return;
         }
 
-        if (zoneLetter === walker.data.letter && !freeSlot) {
+        if (zoneLetter === walker.data.letter && (alreadyInSet || !freeSlot)) {
           playSound({
             mp3Path: "audio/voll.mp3",
-            fallbackText: "Dieses Gehege ist schon voll."
+            fallbackText: alreadyInSet
+              ? `${walker.data.name} ist schon im Gehege.`
+              : "Dieses Gehege ist schon voll."
           });
         } else {
           playSound({
             mp3Path: "audio/falsch.mp3",
-            fallbackText: "Hier passt es nicht hin."
+            fallbackText: "Hier wohnt es nicht."
           });
         }
       }
 
-      // Zurück auf den Weg
-      walker.x = Math.max(20, Math.min(window.innerWidth - 115, e.clientX - offsetX));
+      const dropX = Math.max(20, Math.min(window.innerWidth - 115, e.clientX - offsetX));
+      walker.x = findNonOverlappingX(walker, dropX);
       walker.el.style.left = `${walker.x}px`;
       walker.el.style.top = `${getPathY(walker.x / window.innerWidth, window.innerHeight)}px`;
     });
   }
 
+  function findNonOverlappingX(targetWalker, desiredX) {
+    let candidateX = desiredX;
+    const others = activeWalkers.filter(w => w !== targetWalker && !w.snapped && !w.dragging);
+    let adjusted = true;
+    let guard = 0;
+
+    while (adjusted && guard < 12) {
+      adjusted = false;
+      guard++;
+      for (const other of others) {
+        if (Math.abs(candidateX - other.x) < MIN_WALKER_GAP) {
+          candidateX = other.x - MIN_WALKER_GAP;
+          adjusted = true;
+        }
+      }
+    }
+    return candidateX;
+  }
+
   function snapIntoSlot(walker, zone, slot, letter) {
     walker.snapped = true;
     slot.dataset.occupied = "true";
-    placedCounts[letter] = (placedCounts[letter] || 0) + 1;
+    placedByLetter[letter].add(walker.data.id);
 
-    if (placedCounts[letter] >= 3) {
+    if (placedByLetter[letter].size >= 3) {
       zone.classList.add('full');
     }
 
@@ -791,7 +841,7 @@
 
     playSound({
       mp3Path: "audio/richtig.mp3",
-      fallbackText: `Super! ${walker.data.name} ist angekommen.`
+      fallbackText: `Super! ${walker.data.name} ist im Gehege.`
     });
 
     checkRoundComplete();
@@ -821,7 +871,7 @@
   }
 
   function checkRoundComplete() {
-    const allFull = Object.values(placedCounts).every(count => count >= 3);
+    const allFull = Object.values(placedByLetter).every(set => set.size >= 3);
     if (!allFull) return;
 
     roundFinished = true;
@@ -848,21 +898,37 @@
   }
 
   function loop(now) {
-    const dt = (now - lastFrameTime) / 1000;
+    const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
     lastFrameTime = now;
 
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    activeWalkers.forEach(w => {
-      if (w.snapped || w.dragging) return;
-      w.x += w.speed * dt;
-      if (w.x > width + 40) {
-        w.x = -110;
+    const moving = activeWalkers
+      .filter(w => !w.snapped && !w.dragging)
+      .sort((a, b) => b.x - a.x);
+
+    for (let i = 0; i < moving.length; i++) {
+      const w = moving[i];
+      let nextX = w.x + w.baseSpeed * dt;
+
+      if (i > 0) {
+        const ahead = moving[i - 1];
+        const maxAllowedX = ahead.x - MIN_WALKER_GAP;
+        if (nextX > maxAllowedX) {
+          nextX = maxAllowedX;
+        }
       }
+
+      if (nextX > width + 50) {
+        const tailX = moving[moving.length - 1]?.x ?? 200;
+        nextX = Math.min(-115, tailX - MIN_WALKER_GAP);
+      }
+
+      w.x = nextX;
       w.el.style.left = `${w.x}px`;
       w.el.style.top = `${getPathY(w.x / width, height)}px`;
-    });
+    }
 
     rafId = requestAnimationFrame(loop);
   }

@@ -633,9 +633,11 @@
   }
 
   function trySpawnNextAnimal(round) {
-    const walkingList = activeWalkers.filter(w => !w.snapped && !w.dragging);
+    const walkingList = activeWalkers.filter(w => !w.snapped);
+    if (walkingList.length >= 6) return;
+
     const leftmostX = walkingList.reduce((min, w) => Math.min(min, w.x), Infinity);
-    if (leftmostX < 45) return;
+    if (leftmostX < 40) return;
 
     const availableTargets = round.animals.filter(
       a => !isAnimalAlreadyPlaced(a.id) && !isAnimalCurrentlyOnPath(a.id)
@@ -647,7 +649,7 @@
 
     const pool = useDecoy ? availableDecoys : availableTargets;
     const chosen = pool[Math.floor(Math.random() * pool.length)];
-    spawnWalker(chosen, -110);
+    spawnWalker(chosen, -95);
   }
 
   function spawnWalker(data, startX) {
@@ -655,8 +657,9 @@
     const el = document.createElement('div');
     el.className = 'animal';
 
-    const startY = getPathY(startX / window.innerWidth, window.innerHeight);
-    el.style.left = `${startX}px`;
+    const clampedX = Math.max(-95, startX);
+    const startY = getPathY(clampedX / window.innerWidth, window.innerHeight);
+    el.style.left = `${clampedX}px`;
     el.style.top = `${startY}px`;
 
     const fallbackSpan = document.createElement('span');
@@ -686,7 +689,7 @@
     const walker = {
       el,
       data,
-      x: startX,
+      x: clampedX,
       baseSpeed: 64,
       snapped: false,
       dragging: false
@@ -737,7 +740,6 @@
       if (roundFinished) return;
       e.preventDefault();
 
-      // Bereits im Gehege: kurzes Antippen liest nur den Namen vor
       if (walker.snapped) {
         triggerTapFeedback(walker);
         return;
@@ -753,11 +755,8 @@
       offsetY = e.clientY - rect.top;
 
       walker.el.setPointerCapture(e.pointerId);
-
-      // Sofort Namen vorlesen + visuelles Tippen zeigen
       triggerTapFeedback(walker);
 
-      // Langes Drücken aktiviert den Drag-Modus
       clearHoldTimer();
       holdTimer = setTimeout(() => {
         if (pointerDown && !walker.dragging) {
@@ -782,4 +781,196 @@
       highlightZoneAt(e.clientX, e.clientY);
     });
 
-    function finish
+    function finishPointer(e) {
+      if (!pointerDown || e.pointerId !== activePointerId) return;
+      pointerDown = false;
+      activePointerId = null;
+      clearHoldTimer();
+
+      if (!walker.dragging) {
+        return;
+      }
+
+      walker.dragging = false;
+      walker.el.classList.remove('dragging');
+      clearZoneHighlights();
+
+      const targetZone = findZoneAt(e.clientX, e.clientY);
+      if (targetZone) {
+        const zoneLetter = targetZone.dataset.letter;
+        const alreadyInSet = placedByLetter[zoneLetter]?.has(walker.data.id);
+        const freeSlot = targetZone.querySelector('.slot[data-occupied="false"]');
+
+        if (zoneLetter === walker.data.letter && !alreadyInSet && freeSlot) {
+          snapIntoSlot(walker, targetZone, freeSlot, zoneLetter);
+          return;
+        }
+
+        if (zoneLetter === walker.data.letter && (alreadyInSet || !freeSlot)) {
+          playSound({
+            mp3Path: "audio/voll.mp3",
+            fallbackText: alreadyInSet
+              ? `${walker.data.name} ist schon im Gehege.`
+              : "Dieses Gehege ist schon voll."
+          });
+        } else {
+          playSound({
+            mp3Path: "audio/falsch.mp3",
+            fallbackText: "Hier wohnt es nicht."
+          });
+        }
+      }
+
+      // Sicher im sichtbaren Bereich des Weges absetzen (nie unter -80 px schieben)
+      const dropX = Math.max(20, Math.min(window.innerWidth - 120, e.clientX - offsetX));
+      walker.x = findNonOverlappingX(walker, dropX);
+      walker.el.style.left = `${walker.x}px`;
+      walker.el.style.top = `${getPathY(walker.x / window.innerWidth, window.innerHeight)}px`;
+    }
+
+    walker.el.addEventListener('pointerup', finishPointer);
+    walker.el.addEventListener('pointercancel', finishPointer);
+  }
+
+  function findNonOverlappingX(targetWalker, desiredX) {
+    let candidateX = Math.max(16, desiredX);
+    const others = activeWalkers
+      .filter(w => w !== targetWalker && !w.snapped && !w.dragging)
+      .sort((a, b) => a.x - b.x);
+
+    for (const other of others) {
+      if (Math.abs(candidateX - other.x) < MIN_WALKER_GAP) {
+        // Nur nach links ausweichen, solange es im sichtbaren Bereich bleibt
+        const leftCandidate = other.x - MIN_WALKER_GAP;
+        if (leftCandidate >= 12) {
+          candidateX = leftCandidate;
+        } else {
+          candidateX = Math.min(window.innerWidth - 120, other.x + MIN_WALKER_GAP);
+        }
+      }
+    }
+    return Math.max(12, candidateX);
+  }
+
+  function snapIntoSlot(walker, zone, slot, letter) {
+    walker.snapped = true;
+    slot.dataset.occupied = "true";
+    placedByLetter[letter].add(walker.data.id);
+
+    if (placedByLetter[letter].size >= 3) {
+      zone.classList.add('full');
+    }
+
+    walker.el.classList.remove('dragging');
+    walker.el.classList.add('snapped');
+    walker.el.style.left = '';
+    walker.el.style.top = '';
+    slot.appendChild(walker.el);
+
+    playSound({
+      mp3Path: "audio/richtig.mp3",
+      fallbackText: `Super! ${walker.data.name} ist im Gehege.`
+    });
+
+    checkRoundComplete();
+  }
+
+  function findZoneAt(x, y) {
+    const zones = document.querySelectorAll('.map-zone');
+    for (const z of zones) {
+      const r = z.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+        return z;
+      }
+    }
+    return null;
+  }
+
+  function highlightZoneAt(x, y) {
+    clearZoneHighlights();
+    const z = findZoneAt(x, y);
+    if (z) z.classList.add('highlight');
+  }
+
+  function clearZoneHighlights() {
+    document.querySelectorAll('.map-zone.highlight').forEach(el => {
+      el.classList.remove('highlight');
+    });
+  }
+
+  function checkRoundComplete() {
+    const allFull = Object.values(placedByLetter).every(set => set.size >= 3);
+    if (!allFull) return;
+
+    roundFinished = true;
+    clearInterval(spawnTimer);
+
+    activeWalkers.forEach(w => {
+      if (!w.snapped && w.el.parentElement) {
+        w.el.remove();
+      }
+    });
+
+    setTimeout(() => {
+      playSound({
+        mp3Path: "audio/gewonnen.mp3",
+        fallbackText: "Hurra! Alle Tiere sind wieder in ihren Gehegen!"
+      });
+      document.getElementById('roundCompleteBanner').classList.add('show');
+    }, 650);
+  }
+
+  function nextRound() {
+    roundIndex = (roundIndex + 1) % ROUNDS.length;
+    initRound(roundIndex);
+  }
+
+  function loop(now) {
+    const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+    lastFrameTime = now;
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    const moving = activeWalkers
+      .filter(w => !w.snapped && !w.dragging)
+      .sort((a, b) => b.x - a.x);
+
+    for (let i = 0; i < moving.length; i++) {
+      const w = moving[i];
+      let nextX = w.x + w.baseSpeed * dt;
+
+      if (i > 0) {
+        const ahead = moving[i - 1];
+        const maxAllowedX = ahead.x - MIN_WALKER_GAP;
+        if (nextX > maxAllowedX) {
+          nextX = maxAllowedX;
+        }
+      }
+
+      if (nextX > width + 30) {
+        // Links neu einsetzen, aber nie weit ins Negative abdriften lassen
+        const leftmostOther = moving.reduce(
+          (min, other, idx) => (idx === i ? min : Math.min(min, other.x)),
+          Infinity
+        );
+        nextX = leftmostOther < 50 ? Math.max(-95, leftmostOther - MIN_WALKER_GAP) : -95;
+        nextX = Math.max(-95, nextX);
+      }
+
+      // Sicherstellen, dass kein Tier links außerhalb des Bildschirms verschwindet
+      w.x = Math.max(-95, nextX);
+      w.el.style.left = `${w.x}px`;
+      w.el.style.top = `${getPathY(w.x / width, height)}px`;
+    }
+
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function stopLoop() {
+    if (spawnTimer) clearInterval(spawnTimer);
+    if (rafId) cancelAnimationFrame(rafId);
+  }
+</script>
+</body>
+</html>

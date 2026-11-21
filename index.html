@@ -7,7 +7,6 @@
 <style>
   :root {
     --start-green: #42b82a;
-    --park-grass: #63b946;
     --ink: #1e1e1e;
     --panel: #fffdf5;
     --success: #22c55e;
@@ -43,7 +42,7 @@
     display: flex;
   }
 
-  /* ================= SCREEN 1: WILLKOMMEN (ZOO ALARM) ================= */
+  /* ================= SCREEN 1: WILLKOMMEN ================= */
   #welcomeScreen {
     background-color: var(--start-green);
     flex-direction: column;
@@ -68,7 +67,7 @@
     display: flex;
     gap: 20px;
     align-items: center;
-    background: rgba(255, 253, 245, 0.94);
+    background: rgba(255, 253, 245, 0.95);
     padding: 12px 22px;
     border-radius: 30px;
     border: 3.5px solid var(--ink);
@@ -115,9 +114,9 @@
     box-shadow: 0 1px 0 var(--ink);
   }
 
-  /* ================= SCREEN 2: VOGELPERSPEKTIVE-PARK ================= */
+  /* ================= SCREEN 2: ZOO-KULISSE (3 GEHEGE OBEN, WEG UNTEN) ================= */
   #gameScreen {
-    background: radial-gradient(circle at 50% 45%, #74c954 0%, #57ab3c 100%);
+    background: linear-gradient(180deg, #7ed357 0%, #66be43 58%, #57ab38 100%);
     position: relative;
   }
 
@@ -132,14 +131,13 @@
 
   .top-hud {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 8px;
+    left: 14px;
+    right: 14px;
     z-index: 25;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 18px;
     pointer-events: none;
   }
 
@@ -151,9 +149,9 @@
     background: var(--panel);
     border: 3px solid var(--ink);
     border-radius: 999px;
-    padding: 6px 18px;
+    padding: 5px 16px;
     font-weight: bold;
-    font-size: 1.05rem;
+    font-size: 1rem;
     box-shadow: 0 4px 0 var(--ink);
   }
 
@@ -161,58 +159,49 @@
     background: var(--panel);
     border: 3px solid var(--ink);
     border-radius: 16px;
-    padding: 6px 14px;
-    font-size: 1.05rem;
+    padding: 5px 14px;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 4px 0 var(--ink);
   }
 
+  /* Drei Gehege-Zonen nebeneinander im oberen Bereich */
   .map-zone {
     position: absolute;
+    top: 12%;
+    height: 43%;
+    width: 29.5%;
     z-index: 6;
-    border-radius: 44% 56% 48% 52% / 50% 44% 56% 50%;
+    border-radius: 28px;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
-  .map-zone-0 {
-    left: 4.5%;
-    top: 8.5%;
-    width: 38%;
-    height: 43%;
-  }
-
-  .map-zone-1 {
-    right: 4.5%;
-    top: 8%;
-    width: 39%;
-    height: 44%;
-  }
-
-  .map-zone-2 {
-    left: 8.5%;
-    bottom: 3.5%;
-    width: 41%;
-    height: 36%;
-  }
+  .map-zone-0 { left: 2.5%; }
+  .map-zone-1 { left: 35.25%; }
+  .map-zone-2 { left: 68%; }
 
   .map-zone.highlight {
-    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.72);
-    transform: scale(1.03);
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.8);
+    transform: scale(1.025);
   }
 
   .map-zone.full {
-    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.78);
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.85);
   }
 
+  /* Buchstaben-Wegweiser oben am Gehege */
   .signpost-btn {
     position: absolute;
-    background: #f5deb3;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f6dfaf;
     border: 3.5px solid var(--ink);
     border-radius: 16px;
-    min-width: 66px;
-    padding: 3px 15px;
-    font-size: clamp(1.85rem, 4vw, 2.65rem);
+    min-width: 64px;
+    padding: 2px 14px;
+    font-size: clamp(1.8rem, 3.8vw, 2.5rem);
     font-weight: bold;
     line-height: 1.1;
     text-align: center;
@@ -225,11 +214,11 @@
   .signpost-btn::after {
     content: "";
     position: absolute;
-    bottom: -14px;
+    bottom: -12px;
     left: 50%;
     transform: translateX(-50%);
     width: 7px;
-    height: 13px;
+    height: 11px;
     background: #6b4423;
     border: 2px solid var(--ink);
     border-top: none;
@@ -237,31 +226,30 @@
   }
 
   .signpost-btn:active {
-    transform: translateY(3px);
+    transform: translateX(-50%) translateY(3px);
     box-shadow: 0 2px 0 var(--ink);
   }
 
-  .map-zone-0 .signpost-btn { top: -10px; left: 41%; }
-  .map-zone-1 .signpost-btn { top: -8px;  left: 39%; }
-  .map-zone-2 .signpost-btn { top: -14px; left: 41%; }
-
+  /* 3 feste Plätze innerhalb jedes Geheges */
   .slot {
     position: absolute;
-    width: 30%;
-    height: 44%;
+    width: 31%;
+    height: 54%;
+    bottom: 8%;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .slot-0 { left: 9%;  top: 23%; }
-  .slot-1 { right: 9%; top: 21%; }
-  .slot-2 { left: 35%; bottom: 7%; }
+  .slot-0 { left: 2%; }
+  .slot-1 { left: 34.5%; }
+  .slot-2 { left: 67%; }
 
+  /* Laufende Tiere auf dem Weg */
   .animal {
     position: fixed;
-    width: clamp(82px, 11vw, 114px);
-    height: clamp(82px, 11vw, 114px);
+    width: clamp(82px, 11vw, 112px);
+    height: clamp(82px, 11vw, 112px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -269,6 +257,10 @@
     touch-action: none;
     z-index: 16;
     transition: transform 0.12s ease-out;
+  }
+
+  .animal.tapped {
+    transform: scale(1.1);
   }
 
   .animal.dragging {
@@ -279,11 +271,11 @@
 
   .animal.snapped {
     position: static;
-    cursor: default;
-    touch-action: auto;
+    cursor: pointer;
+    touch-action: manipulation;
     z-index: 8;
-    width: clamp(64px, 8.6vw, 94px);
-    height: clamp(64px, 8.6vw, 94px);
+    width: clamp(62px, 8.2vw, 90px);
+    height: clamp(62px, 8.2vw, 90px);
   }
 
   .animal img {
@@ -291,16 +283,17 @@
     height: 100%;
     object-fit: contain;
     pointer-events: none;
-    filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.28));
-  }
-
-  .animal-emoji {
-    font-size: clamp(3.2rem, 6vw, 4.7rem);
-    line-height: 1;
-    pointer-events: none;
     filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.25));
   }
 
+  .animal-emoji {
+    font-size: clamp(3rem, 5.8vw, 4.5rem);
+    line-height: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.22));
+  }
+
+  /* Runden-Abschluss */
   .round-complete-banner {
     display: none;
     position: fixed;
@@ -352,7 +345,7 @@
 </head>
 <body>
 
-  <!-- SCREEN 1: WILLKOMMEN (ZOO ALARM) -->
+  <!-- SCREEN 1: WILLKOMMEN -->
   <section id="welcomeScreen" class="screen active">
     <img class="welcome-bg-img" src="Willkommen im Zoo (3).png" alt="Willkommen im Zoo Alarm"
          onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='1.png';}else{this.style.display='none';}">
@@ -362,80 +355,51 @@
     </div>
   </section>
 
-  <!-- SCREEN 2: VOGELPERSPEKTIVE-PARK -->
+  <!-- SCREEN 2: VOGELPERSPEKTIVE-ZOO MIT 3 GEHEGEN OBEN & WEG UNTEN -->
   <section id="gameScreen" class="screen">
     <svg class="zoo-map-svg" viewBox="0 0 1000 620" preserveAspectRatio="none">
-      <ellipse cx="500" cy="310" rx="480" ry="290" fill="#6cc44e" opacity="0.55" />
-      <circle cx="150" cy="360" r="95" fill="#52a438" opacity="0.35" />
-      <circle cx="860" cy="340" r="110" fill="#52a438" opacity="0.35" />
+      <ellipse cx="500" cy="310" rx="490" ry="300" fill="#77cf50" opacity="0.45" />
 
-      <path d="M 225,355 L 225,295" stroke="#e9d29c" stroke-width="34" stroke-linecap="round" />
-      <path d="M 745,365 L 745,295" stroke="#e9d29c" stroke-width="34" stroke-linecap="round" />
-      <path d="M 305,375 L 305,435" stroke="#e9d29c" stroke-width="34" stroke-linecap="round" />
-      <path d="M 555,372 C 625,445 645,530 620,630" fill="none" stroke="#e9d29c" stroke-width="30" stroke-linecap="round" />
+      <!-- GEHEGE 0 (Links) -->
+      <rect x="28" y="82" width="288" height="252" rx="28" fill="#c79557" stroke="#5e3b1b" stroke-width="6" />
+      <rect x="38" y="92" width="268" height="232" rx="22" fill="#d7a86c" />
+      <path d="M 44,82 L 310,82 M 44,334 L 310,334" stroke="#6b4423" stroke-width="4" stroke-dasharray="14 10" />
 
-      <path d="M -30,415 C 190,395 310,335 495,355 C 675,375 795,485 1030,465"
-            fill="none" stroke="#c9ad72" stroke-width="86" stroke-linecap="round" />
-      <path d="M -30,415 C 190,395 310,335 495,355 C 675,375 795,485 1030,465"
-            fill="none" stroke="#f2dfb3" stroke-width="74" stroke-linecap="round" />
-      <path d="M -30,376 C 190,356 310,296 495,316 C 675,336 795,446 1030,426"
-            fill="none" stroke="#8a6d3b" stroke-width="2.5" stroke-dasharray="10 8" stroke-linecap="round" />
-      <path d="M -30,454 C 190,434 310,374 495,394 C 675,414 795,524 1030,504"
-            fill="none" stroke="#8a6d3b" stroke-width="2.5" stroke-dasharray="10 8" stroke-linecap="round" />
+      <!-- GEHEGE 1 (Mitte) -->
+      <rect x="356" y="82" width="288" height="252" rx="28" fill="#99774d" stroke="#5e3b1b" stroke-width="6" />
+      <rect x="366" y="92" width="268" height="232" rx="22" fill="#b49162" />
+      <ellipse cx="500" cy="242" rx="105" ry="52" fill="#4cc3f2" stroke="#287da1" stroke-width="3" />
+      <path d="M 455,236 Q 500,228 545,236 M 472,258 Q 505,252 536,258"
+            fill="none" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" />
 
-      <!-- GEHEGE 0 (Oben Links) -->
-      <path d="M 52,175 C 44,92 142,54 242,60 C 348,66 422,110 412,192 C 402,272 318,310 218,306 C 118,302 58,252 52,175 Z"
-            fill="#9e6b3b" stroke="#5c3a1d" stroke-width="6" />
-      <path d="M 66,176 C 60,104 148,70 240,75 C 336,80 404,118 395,190 C 386,260 310,294 218,290 C 126,286 72,244 66,176 Z"
-            fill="#b67e48" />
-      <ellipse cx="105" cy="242" rx="28" ry="15" fill="#4cc3f2" stroke="#2b7da3" stroke-width="2.5" />
+      <!-- GEHEGE 2 (Rechts) -->
+      <rect x="684" y="82" width="288" height="252" rx="28" fill="#689e38" stroke="#3c5e1d" stroke-width="6" />
+      <rect x="694" y="92" width="268" height="232" rx="22" fill="#84bc4b" />
+      <ellipse cx="896" cy="284" rx="44" ry="22" fill="#4cc3f2" stroke="#287da1" stroke-width="2.5" />
 
-      <!-- GEHEGE 1 (Oben Rechts) -->
-      <path d="M 572,165 C 566,82 662,48 772,54 C 882,60 960,106 952,190 C 944,272 862,312 758,308 C 654,304 578,246 572,165 Z"
-            fill="#9e6b3b" stroke="#5c3a1d" stroke-width="6" />
-      <path d="M 586,166 C 580,94 668,64 770,70 C 872,75 944,114 936,188 C 928,260 854,296 758,292 C 662,288 592,238 586,166 Z"
-            fill="#b67e48" />
-      <path d="M 775,188 C 770,145 832,126 882,144 C 924,160 926,225 884,254 C 842,282 780,248 775,188 Z"
-            fill="#4cc3f2" stroke="#2b7da3" stroke-width="3" />
-      <path d="M 805,182 Q 832,175 858,182 M 818,215 Q 848,208 874,215"
-            fill="none" stroke="#bae6fd" stroke-width="2.5" stroke-linecap="round" />
+      <!-- Nebenwege -->
+      <path d="M 172,334 L 172,415" stroke="#e8cf97" stroke-width="26" stroke-linecap="round" />
+      <path d="M 500,334 L 500,405" stroke="#e8cf97" stroke-width="26" stroke-linecap="round" />
+      <path d="M 828,334 L 828,430" stroke="#e8cf97" stroke-width="26" stroke-linecap="round" />
 
-      <!-- GEHEGE 2 (Unten Links/Mitte) -->
-      <path d="M 92,498 C 88,434 182,408 288,412 C 394,416 476,448 470,512 C 464,576 376,602 272,598 C 168,594 96,560 92,498 Z"
-            fill="#9e6b3b" stroke="#5c3a1d" stroke-width="6" />
-      <path d="M 106,498 C 102,444 188,422 288,426 C 386,430 460,456 454,510 C 448,566 368,588 272,584 C 176,580 110,552 106,498 Z"
-            fill="#b67e48" />
-      <ellipse cx="402" cy="528" rx="38" ry="22" fill="#4cc3f2" stroke="#2b7da3" stroke-width="2.5" />
-      <path d="M 384,526 Q 402,520 420,526" fill="none" stroke="#bae6fd" stroke-width="2" stroke-linecap="round" />
+      <!-- Geschwungener Hauptweg unten -->
+      <path d="M -25,425 C 210,395 360,390 525,425 C 690,460 835,445 1025,415"
+            fill="none" stroke="#c5a669" stroke-width="88" stroke-linecap="round" />
+      <path d="M -25,425 C 210,395 360,390 525,425 C 690,460 835,445 1025,415"
+            fill="none" stroke="#f3e1b6" stroke-width="76" stroke-linecap="round" />
 
-      <path d="M 735,545 C 730,512 788,498 835,512 C 882,526 888,574 842,592 C 796,610 740,582 735,545 Z"
-            fill="#38bdf8" stroke="#1d6f96" stroke-width="3.5" />
-      <path d="M 768,546 Q 800,538 832,546" fill="none" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" />
-
+      <!-- Bäume aus der Vogelperspektive -->
       <g>
-        <circle cx="48" cy="316" r="24" fill="#2d6a22" />
-        <circle cx="44" cy="312" r="21" fill="#3f8f2f" />
-        <circle cx="86" cy="342" r="19" fill="#2d6a22" />
-        <circle cx="83" cy="339" r="16" fill="#4ca638" />
-
-        <circle cx="478" cy="115" r="26" fill="#2d6a22" />
-        <circle cx="474" cy="111" r="23" fill="#3f8f2f" />
-        <circle cx="518" cy="148" r="21" fill="#2d6a22" />
-        <circle cx="515" cy="145" r="18" fill="#4ca638" />
-        <circle cx="482" cy="195" r="22" fill="#2d6a22" />
-        <circle cx="479" cy="192" r="19" fill="#3a842b" />
-
-        <circle cx="945" cy="335" r="25" fill="#2d6a22" />
-        <circle cx="941" cy="331" r="22" fill="#3f8f2f" />
-        <circle cx="902" cy="368" r="18" fill="#2d6a22" />
-        <circle cx="899" cy="365" r="15" fill="#4ca638" />
-
-        <circle cx="535" cy="515" r="24" fill="#2d6a22" />
-        <circle cx="531" cy="511" r="21" fill="#3f8f2f" />
-        <circle cx="685" cy="515" r="21" fill="#2d6a22" />
-        <circle cx="682" cy="512" r="18" fill="#4ca638" />
-        <circle cx="935" cy="555" r="26" fill="#2d6a22" />
-        <circle cx="931" cy="551" r="23" fill="#3f8f2f" />
+        <circle cx="52" cy="545" r="24" fill="#2d6a22" />
+        <circle cx="48" cy="541" r="21" fill="#3f8f2f" />
+        <circle cx="240" cy="560" r="21" fill="#2d6a22" />
+        <circle cx="236" cy="556" r="18" fill="#49a037" />
+        <circle cx="510" cy="565" r="25" fill="#2d6a22" />
+        <circle cx="506" cy="561" r="22" fill="#3f8f2f" />
+        <circle cx="760" cy="555" r="22" fill="#2d6a22" />
+        <circle cx="756" cy="551" r="19" fill="#49a037" />
+        <circle cx="945" cy="540" r="26" fill="#2d6a22" />
+        <circle cx="941" cy="536" r="23" fill="#3f8f2f" />
       </g>
     </svg>
 
@@ -458,7 +422,7 @@
   </div>
 
 <script>
-  // ================= TIERE & RUNDEN (ORDNER: ./<id>.png im Main) =================
+  // ================= TIERE & RUNDEN (./<id>.png im Main) =================
   const ROUNDS = [
     {
       title: "Runde 1: L · N · O",
@@ -563,16 +527,16 @@
     });
   }
 
-  // ================= WEG-KURVE FÜR DIE TIERE =================
+  // ================= WEG-KURVE FÜR DIE TIERE (UNTEN) =================
   function getPathY(progressX, screenHeight) {
     const t = Math.max(0, Math.min(1, progressX));
     let normY;
     if (t < 0.5) {
       const u = t * 2;
-      normY = (1 - u) * (1 - u) * 0.66 + 2 * (1 - u) * u * 0.56 + u * u * 0.57;
+      normY = (1 - u) * (1 - u) * 0.68 + 2 * (1 - u) * u * 0.63 + u * u * 0.64;
     } else {
       const u = (t - 0.5) * 2;
-      normY = (1 - u) * (1 - u) * 0.57 + 2 * (1 - u) * u * 0.72 + u * u * 0.74;
+      normY = (1 - u) * (1 - u) * 0.64 + 2 * (1 - u) * u * 0.75 + u * u * 0.72;
     }
     return normY * screenHeight - 52;
   }
@@ -587,6 +551,8 @@
   let roundFinished = false;
 
   const MIN_WALKER_GAP = 145;
+  const HOLD_TO_DRAG_MS = 220;
+  const MOVE_TO_DRAG_PX = 10;
 
   function openWelcomeScreen() {
     stopLoop();
@@ -730,205 +696,90 @@
     activeWalkers.push(walker);
   }
 
+  function triggerTapFeedback(walker) {
+    playSound({
+      mp3Path: walker.data.audioSrc,
+      fallbackText: walker.data.name
+    });
+    walker.el.classList.add('tapped');
+    setTimeout(() => {
+      walker.el.classList.remove('tapped');
+    }, 220);
+  }
+
   function attachDragHandlers(walker) {
+    let pointerDown = false;
+    let activePointerId = null;
+    let startClientX = 0;
+    let startClientY = 0;
     let offsetX = 0;
     let offsetY = 0;
+    let holdTimer = null;
+
+    function clearHoldTimer() {
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+    }
+
+    function beginDrag(clientX, clientY) {
+      if (walker.dragging || walker.snapped || roundFinished) return;
+      clearHoldTimer();
+      walker.dragging = true;
+      walker.el.classList.remove('tapped');
+      walker.el.classList.add('dragging');
+      walker.el.style.left = `${clientX - offsetX}px`;
+      walker.el.style.top = `${clientY - offsetY}px`;
+    }
 
     walker.el.addEventListener('pointerdown', (e) => {
-      if (walker.snapped || roundFinished) return;
+      if (roundFinished) return;
       e.preventDefault();
-      walker.el.setPointerCapture(e.pointerId);
-      walker.dragging = true;
-      walker.el.classList.add('dragging');
 
-      playSound({
-        mp3Path: walker.data.audioSrc,
-        fallbackText: walker.data.name
-      });
+      // Bereits im Gehege: kurzes Antippen liest nur den Namen vor
+      if (walker.snapped) {
+        triggerTapFeedback(walker);
+        return;
+      }
+
+      pointerDown = true;
+      activePointerId = e.pointerId;
+      startClientX = e.clientX;
+      startClientY = e.clientY;
 
       const rect = walker.el.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
+
+      walker.el.setPointerCapture(e.pointerId);
+
+      // Sofort Namen vorlesen + visuelles Tippen zeigen
+      triggerTapFeedback(walker);
+
+      // Langes Drücken aktiviert den Drag-Modus
+      clearHoldTimer();
+      holdTimer = setTimeout(() => {
+        if (pointerDown && !walker.dragging) {
+          beginDrag(startClientX, startClientY);
+        }
+      }, HOLD_TO_DRAG_MS);
     });
 
     walker.el.addEventListener('pointermove', (e) => {
+      if (!pointerDown || e.pointerId !== activePointerId || walker.snapped) return;
+
+      const dx = e.clientX - startClientX;
+      const dy = e.clientY - startClientY;
+
+      if (!walker.dragging && Math.hypot(dx, dy) >= MOVE_TO_DRAG_PX) {
+        beginDrag(e.clientX, e.clientY);
+      }
+
       if (!walker.dragging) return;
       walker.el.style.left = `${e.clientX - offsetX}px`;
       walker.el.style.top = `${e.clientY - offsetY}px`;
       highlightZoneAt(e.clientX, e.clientY);
     });
 
-    walker.el.addEventListener('pointerup', (e) => {
-      if (!walker.dragging) return;
-      walker.dragging = false;
-      walker.el.classList.remove('dragging');
-      clearZoneHighlights();
-
-      const targetZone = findZoneAt(e.clientX, e.clientY);
-      if (targetZone) {
-        const zoneLetter = targetZone.dataset.letter;
-        const alreadyInSet = placedByLetter[zoneLetter]?.has(walker.data.id);
-        const freeSlot = targetZone.querySelector('.slot[data-occupied="false"]');
-
-        if (zoneLetter === walker.data.letter && !alreadyInSet && freeSlot) {
-          snapIntoSlot(walker, targetZone, freeSlot, zoneLetter);
-          return;
-        }
-
-        if (zoneLetter === walker.data.letter && (alreadyInSet || !freeSlot)) {
-          playSound({
-            mp3Path: "audio/voll.mp3",
-            fallbackText: alreadyInSet
-              ? `${walker.data.name} ist schon im Gehege.`
-              : "Dieses Gehege ist schon voll."
-          });
-        } else {
-          playSound({
-            mp3Path: "audio/falsch.mp3",
-            fallbackText: "Hier wohnt es nicht."
-          });
-        }
-      }
-
-      const dropX = Math.max(20, Math.min(window.innerWidth - 115, e.clientX - offsetX));
-      walker.x = findNonOverlappingX(walker, dropX);
-      walker.el.style.left = `${walker.x}px`;
-      walker.el.style.top = `${getPathY(walker.x / window.innerWidth, window.innerHeight)}px`;
-    });
-  }
-
-  function findNonOverlappingX(targetWalker, desiredX) {
-    let candidateX = desiredX;
-    const others = activeWalkers.filter(w => w !== targetWalker && !w.snapped && !w.dragging);
-    let adjusted = true;
-    let guard = 0;
-
-    while (adjusted && guard < 12) {
-      adjusted = false;
-      guard++;
-      for (const other of others) {
-        if (Math.abs(candidateX - other.x) < MIN_WALKER_GAP) {
-          candidateX = other.x - MIN_WALKER_GAP;
-          adjusted = true;
-        }
-      }
-    }
-    return candidateX;
-  }
-
-  function snapIntoSlot(walker, zone, slot, letter) {
-    walker.snapped = true;
-    slot.dataset.occupied = "true";
-    placedByLetter[letter].add(walker.data.id);
-
-    if (placedByLetter[letter].size >= 3) {
-      zone.classList.add('full');
-    }
-
-    walker.el.classList.remove('dragging');
-    walker.el.classList.add('snapped');
-    walker.el.style.left = '';
-    walker.el.style.top = '';
-    slot.appendChild(walker.el);
-
-    playSound({
-      mp3Path: "audio/richtig.mp3",
-      fallbackText: `Super! ${walker.data.name} ist im Gehege.`
-    });
-
-    checkRoundComplete();
-  }
-
-  function findZoneAt(x, y) {
-    const zones = document.querySelectorAll('.map-zone');
-    for (const z of zones) {
-      const r = z.getBoundingClientRect();
-      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
-        return z;
-      }
-    }
-    return null;
-  }
-
-  function highlightZoneAt(x, y) {
-    clearZoneHighlights();
-    const z = findZoneAt(x, y);
-    if (z) z.classList.add('highlight');
-  }
-
-  function clearZoneHighlights() {
-    document.querySelectorAll('.map-zone.highlight').forEach(el => {
-      el.classList.remove('highlight');
-    });
-  }
-
-  function checkRoundComplete() {
-    const allFull = Object.values(placedByLetter).every(set => set.size >= 3);
-    if (!allFull) return;
-
-    roundFinished = true;
-    clearInterval(spawnTimer);
-
-    activeWalkers.forEach(w => {
-      if (!w.snapped && w.el.parentElement) {
-        w.el.remove();
-      }
-    });
-
-    setTimeout(() => {
-      playSound({
-        mp3Path: "audio/gewonnen.mp3",
-        fallbackText: "Hurra! Alle Tiere sind wieder in ihren Gehegen!"
-      });
-      document.getElementById('roundCompleteBanner').classList.add('show');
-    }, 650);
-  }
-
-  function nextRound() {
-    roundIndex = (roundIndex + 1) % ROUNDS.length;
-    initRound(roundIndex);
-  }
-
-  function loop(now) {
-    const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
-    lastFrameTime = now;
-
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    const moving = activeWalkers
-      .filter(w => !w.snapped && !w.dragging)
-      .sort((a, b) => b.x - a.x);
-
-    for (let i = 0; i < moving.length; i++) {
-      const w = moving[i];
-      let nextX = w.x + w.baseSpeed * dt;
-
-      if (i > 0) {
-        const ahead = moving[i - 1];
-        const maxAllowedX = ahead.x - MIN_WALKER_GAP;
-        if (nextX > maxAllowedX) {
-          nextX = maxAllowedX;
-        }
-      }
-
-      if (nextX > width + 50) {
-        const tailX = moving[moving.length - 1]?.x ?? 200;
-        nextX = Math.min(-115, tailX - MIN_WALKER_GAP);
-      }
-
-      w.x = nextX;
-      w.el.style.left = `${w.x}px`;
-      w.el.style.top = `${getPathY(w.x / width, height)}px`;
-    }
-
-    rafId = requestAnimationFrame(loop);
-  }
-
-  function stopLoop() {
-    if (spawnTimer) clearInterval(spawnTimer);
-    if (rafId) cancelAnimationFrame(rafId);
-  }
-</script>
-</body>
-</html>
+    function finish

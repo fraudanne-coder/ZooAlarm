@@ -437,7 +437,7 @@
   </div>
 
 <script>
-  // ================= TIERE & RUNDEN (ALLES DIREKT IM MAIN: ./<id>.png & ./<id>.mp3) =================
+  // ================= TIERE & RUNDEN (ALLES DIREKT IM MAIN) =================
   const ROUNDS = [
     {
       title: "Runde 1: L · N · O",
@@ -483,6 +483,21 @@
         { id: "tapir",    name: "Tapir",    letter: "T", emoji: "🐗" },
         { id: "tukan",    name: "Tukan",    letter: "T", emoji: "🐦" }
       ]
+    },
+    {
+      title: "Runde 4: S · I · R",
+      letters: ["S", "I", "R"],
+      animals: [
+        { id: "skorpion",     name: "Skorpion",     letter: "S", emoji: "🦂", fileBase: "Skorpion" },
+        { id: "seepferdchen", name: "Seepferdchen", letter: "S", emoji: "🐠", fileBase: "Seepferdchen" },
+        { id: "salamander",   name: "Salamander",   letter: "S", emoji: "🦎", fileBase: "Salamander" },
+        { id: "igel",         name: "Igel",         letter: "I", emoji: "🦔", fileBase: "Igel" },
+        { id: "impala",       name: "Impala",       letter: "I", emoji: "🦌", fileBase: "Impala" },
+        { id: "iltis",        name: "Iltis",        letter: "I", emoji: "🐾", fileBase: "Iltis" },
+        { id: "robbe",        name: "Robbe",        letter: "R", emoji: "🦭", fileBase: "Robbe" },
+        { id: "rochen",       name: "Rochen",       letter: "R", emoji: "🐟", fileBase: "Rochen" },
+        { id: "reh",          name: "Reh",          letter: "R", emoji: "🦌", fileBase: "Reh" }
+      ]
     }
   ];
 
@@ -494,15 +509,17 @@
   ];
 
   const PHONETIC_FALLBACK = {
-    "A": "Aaa", "B": "B", "F": "Fff", "K": "K", "L": "Lll",
-    "N": "Nnn", "O": "Ooo", "P": "P", "T": "T"
+    "A": "Aaa", "B": "B", "F": "Fff", "I": "Iii", "K": "K",
+    "L": "Lll", "N": "Nnn", "O": "Ooo", "P": "P", "R": "Rrr",
+    "S": "Sss", "T": "T"
   };
 
   // Variable Feedback-Audios im main-Ordner
   const POSITIVE_FEEDBACK = [
     { mp3: "./super.mp3",   text: "Super!" },
     { mp3: "./sehrgut.mp3", text: "Sehr gut!" },
-    { mp3: "./richtig.mp3", text: "Richtig!" }
+    { mp3: "./richtig.mp3", text: "Richtig!" },
+    { mp3: "./treffer.mp3", text: "Das war ein Treffer!" }
   ];
 
   const NEGATIVE_FEEDBACK = [
@@ -523,21 +540,37 @@
     return { item: list[idx], idx };
   }
 
+  function getAssetBaseNames(animalData) {
+    const primary = animalData.fileBase || animalData.id;
+    const lower = animalData.id.toLowerCase();
+    return primary === lower ? [primary] : [primary, lower];
+  }
+
   // ================= AUDIO =================
   let currentAudio = null;
 
-  function playSound({ mp3Path, fallbackText }) {
+  function playAudioCandidates(candidates, fallbackText, index = 0) {
+    if (!candidates || index >= candidates.length) {
+      speakFallback(fallbackText);
+      return;
+    }
+
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
     }
 
-    if (mp3Path) {
-      const audio = new Audio(mp3Path);
-      currentAudio = audio;
-      audio.play().catch(() => {
-        speakFallback(fallbackText);
-      });
+    const audio = new Audio(candidates[index]);
+    currentAudio = audio;
+    audio.play().catch(() => {
+      playAudioCandidates(candidates, fallbackText, index + 1);
+    });
+  }
+
+  function playSound({ mp3Path, mp3Candidates, fallbackText }) {
+    const list = mp3Candidates || (mp3Path ? [mp3Path] : []);
+    if (list.length > 0) {
+      playAudioCandidates(list, fallbackText, 0);
       return;
     }
     speakFallback(fallbackText);
@@ -750,13 +783,21 @@
     fallbackSpan.textContent = data.emoji;
     fallbackSpan.style.display = 'none';
 
+    const bases = getAssetBaseNames(data);
+    const imgCandidates = [];
+    bases.forEach(b => {
+      imgCandidates.push(`./${b}.png`);
+      imgCandidates.push(`./${b}.jpg`);
+    });
+
+    let imgIdx = 0;
     const img = document.createElement('img');
-    img.src = `./${data.id}.png`;
+    img.src = imgCandidates[0];
     img.alt = data.name;
     img.onerror = () => {
-      if (!img.dataset.triedJpg) {
-        img.dataset.triedJpg = "1";
-        img.src = `./${data.id}.jpg`;
+      imgIdx += 1;
+      if (imgIdx < imgCandidates.length) {
+        img.src = imgCandidates[imgIdx];
       } else {
         img.style.display = 'none';
         fallbackSpan.style.display = 'inline';
@@ -781,8 +822,9 @@
   }
 
   function triggerTapFeedback(walker) {
+    const audioCandidates = getAssetBaseNames(walker.data).map(b => `./${b}.mp3`);
     playSound({
-      mp3Path: `./${walker.data.id}.mp3`,
+      mp3Candidates: audioCandidates,
       fallbackText: walker.data.name
     });
     walker.el.classList.add('tapped');
